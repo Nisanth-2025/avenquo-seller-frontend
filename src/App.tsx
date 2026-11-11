@@ -6,6 +6,7 @@ import { ProtectedRoute, PublicRoute } from './components/RouteGuards';
 import SellerAuthPage from './pages/SellerAuthPage';
 import SellerDashboardPage from './pages/SellerDashboardPage';
 import SellerProfilePage from './pages/SellerProfilePage';
+import SellerTaxPage from './pages/SellerTaxPage';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -25,7 +26,9 @@ const App: React.FC = () => (
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<SellerDashboardPage />} />
             <Route path="/dashboard/profile" element={<SellerProfilePage />} />
+            <Route path="/dashboard/tax" element={<SellerTaxPage />} />
             <Route path="/profile" element={<Navigate to="/dashboard/profile" replace />} />
+            <Route path="/tax" element={<Navigate to="/dashboard/tax" replace />} />
           </Route>
 
           {/* Root redirect */}

@@ -13,5 +13,7 @@ export const API_ENDPOINTS = {
     PROFILE:            '/api/v1/sellers/profile',
     PROFILE_LOGO:       '/api/v1/sellers/profile/logo',
     PROFILE_BANNER:     '/api/v1/sellers/profile/banner',
+    TAX:                '/api/v1/sellers/tax',
+    TAX_SUBMIT:         '/api/v1/sellers/tax/submit',
   },
 } as const;
