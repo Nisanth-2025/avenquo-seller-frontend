@@ -5,7 +5,7 @@ import { TaxDetailsCard } from '../features/tax/components/TaxDetailsCard';
 import { TaxDetailsForm } from '../features/tax/components/TaxDetailsForm';
 import { Button } from '../components/ui/Button';
 import { Alert } from '../components/ui/Alert';
-import { SellerTaxRequestDTO } from '../types/tax.types';
+import { SellerTaxRequestDTO, SellerTaxUpdateRequestDTO } from '../types/tax.types';
 import { ArrowLeft, RefreshCw, Receipt, ShieldCheck } from 'lucide-react';
 
 export const SellerTaxPage: React.FC = () => {
@@ -25,21 +25,46 @@ export const SellerTaxPage: React.FC = () => {
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const handleSaveTax = async (data: SellerTaxRequestDTO) => {
+  const verificationStatus = taxDetails?.verificationStatus || 'DRAFT';
+  const isLocked = verificationStatus === 'SUBMITTED' || verificationStatus === 'UNDER_REVIEW' || verificationStatus === 'APPROVED';
+
+  const handleSaveTax = async (data: SellerTaxRequestDTO | SellerTaxUpdateRequestDTO) => {
     setApiError(null);
     setSuccessNotice(null);
     try {
       if (hasTaxDetails) {
-        await updateMutation.mutateAsync(data);
-        setSuccessNotice('Tax details updated successfully.');
+        await updateMutation.mutateAsync(data as SellerTaxUpdateRequestDTO);
+        setSuccessNotice('Tax draft updated successfully in database.');
       } else {
-        await createMutation.mutateAsync(data);
-        setSuccessNotice('Tax details registered successfully.');
+        await createMutation.mutateAsync(data as SellerTaxRequestDTO);
+        setSuccessNotice('Tax records created successfully.');
       }
+      await refetch();
       setIsEditing(false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to save tax records.';
       setApiError(msg);
+      throw err;
+    }
+  };
+
+  const handleSaveAndSubmit = async (data: SellerTaxRequestDTO | SellerTaxUpdateRequestDTO) => {
+    setApiError(null);
+    setSuccessNotice(null);
+    try {
+      if (hasTaxDetails) {
+        await updateMutation.mutateAsync(data as SellerTaxUpdateRequestDTO);
+      } else {
+        await createMutation.mutateAsync(data as SellerTaxRequestDTO);
+      }
+      await submitMutation.mutateAsync();
+      await refetch();
+      setSuccessNotice('Tax records submitted for compliance verification.');
+      setIsEditing(false);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to submit tax records.';
+      setApiError(msg);
+      throw err;
     }
   };
 
@@ -48,6 +73,7 @@ export const SellerTaxPage: React.FC = () => {
     setSuccessNotice(null);
     try {
       await submitMutation.mutateAsync();
+      await refetch();
       setSuccessNotice('Tax details submitted for compliance verification.');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to submit tax details.';
@@ -109,9 +135,23 @@ export const SellerTaxPage: React.FC = () => {
             <span className="text-sm font-semibold text-gray-900">Tax Compliance</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <ShieldCheck className="h-4 w-4 text-emerald-600" />
-            <span className="hidden sm:inline">Statutory Identification</span>
+          <div className="flex items-center gap-3 text-xs text-gray-500">
+            <Link to="/dashboard/documents" className="hover:text-gray-900 hidden sm:inline">
+              Documents
+            </Link>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <Link to="/dashboard/bank" className="hover:text-gray-900 hidden sm:inline">
+              Bank Details
+            </Link>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <Link to="/dashboard/address" className="hover:text-gray-900 hidden sm:inline">
+              Address
+            </Link>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <span className="hidden sm:inline">Encrypted</span>
+            </div>
           </div>
         </div>
       </div>
@@ -129,7 +169,7 @@ export const SellerTaxPage: React.FC = () => {
             </p>
           </div>
 
-          {hasTaxDetails && !isEditing && (
+          {hasTaxDetails && !isEditing && !isLocked && (
             <Button size="sm" variant="secondary" onClick={() => setIsEditing(true)}>
               Edit Details
             </Button>
@@ -145,7 +185,7 @@ export const SellerTaxPage: React.FC = () => {
         )}
 
         {/* ── Dynamic Content: Card or Form ── */}
-        {hasTaxDetails && !isEditing && taxDetails ? (
+        {hasTaxDetails && (!isEditing || isLocked) && taxDetails ? (
           <TaxDetailsCard
             taxDetails={taxDetails}
             onEdit={() => setIsEditing(true)}
@@ -155,10 +195,11 @@ export const SellerTaxPage: React.FC = () => {
         ) : (
           <TaxDetailsForm
             initialData={taxDetails}
-            onSubmit={handleSaveTax}
+            onSaveDraft={handleSaveTax}
+            onSubmitVerification={handleSaveAndSubmit}
             onCancel={hasTaxDetails ? () => setIsEditing(false) : undefined}
             isLoading={createMutation.isPending || updateMutation.isPending}
-            isEditMode={isEditing}
+            isSubmitting={submitMutation.isPending}
           />
         )}
       </main>

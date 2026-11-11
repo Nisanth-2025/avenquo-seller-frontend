@@ -1,104 +1,139 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
 import { Alert } from '../../../components/ui/Alert';
-import { SellerTaxRequestDTO, SellerTaxResponseDTO } from '../../../types/tax.types';
+import { SellerTaxRequestDTO, SellerTaxResponseDTO, SellerTaxUpdateRequestDTO } from '../../../types/tax.types';
 import { ApiClientError } from '../../../api/client';
-import { ShieldCheck, Check, X, CreditCard, Receipt, Building2 } from 'lucide-react';
+import { ShieldCheck, Check, CreditCard, Receipt, Building2, Send, Save, AlertTriangle } from 'lucide-react';
 
 const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
 const cinRegex = /^[LU]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/;
 
-const taxFormSchema = z
-  .object({
+const makeTaxSchema = (isEditing: boolean) =>
+  z.object({
     pan: z
       .string()
       .trim()
       .toUpperCase()
-      .regex(panRegex, 'Must be a valid 10-character Indian PAN (e.g. ABCDE1234F)'),
+      .superRefine((val, ctx) => {
+        if (!isEditing && (!val || !panRegex.test(val))) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Must be a valid 10-character Indian PAN (e.g. ABCDE1234F)',
+          });
+        }
+        if (isEditing && val && !panRegex.test(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Must be a valid 10-character Indian PAN (e.g. ABCDE1234F)',
+          });
+        }
+      }),
     gstRegistered: z.boolean(),
-    gstin: z.string().trim().toUpperCase(),
-    hasCin: z.boolean(),
-    cin: z.string().trim().toUpperCase(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.gstRegistered) {
-      if (!data.gstin || !gstinRegex.test(data.gstin)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['gstin'],
-          message: 'Must be a valid 15-character GSTIN (e.g. 27ABCDE1234F1Z5)',
-        });
-      }
-    }
-    if (data.hasCin) {
-      if (!data.cin || !cinRegex.test(data.cin)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['cin'],
-          message: 'Must be a valid 21-character CIN (e.g. U12345MH2020PTC123456)',
-        });
-      }
-    }
+    gstin: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .min(1, 'GSTIN is compulsory')
+      .regex(gstinRegex, 'Must be a valid 15-character GSTIN (e.g. 27ABCDE1234F1Z5)'),
+    cin: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .min(1, 'CIN is compulsory')
+      .regex(cinRegex, 'Must be a valid 21-character CIN (e.g. U12345MH2020PTC123456)'),
   });
 
-type TaxFormData = z.infer<typeof taxFormSchema>;
+type TaxFormData = {
+  pan: string;
+  gstRegistered: boolean;
+  gstin: string;
+  cin: string;
+};
 
 interface TaxDetailsFormProps {
   initialData?: SellerTaxResponseDTO | null;
-  onSubmit: (data: SellerTaxRequestDTO) => Promise<void>;
+  onSaveDraft: (data: SellerTaxRequestDTO | SellerTaxUpdateRequestDTO) => Promise<void>;
+  onSubmitVerification?: (data: SellerTaxRequestDTO | SellerTaxUpdateRequestDTO) => Promise<void>;
   onCancel?: () => void;
   isLoading: boolean;
-  isEditMode?: boolean;
+  isSubmitting?: boolean;
 }
 
 export const TaxDetailsForm: React.FC<TaxDetailsFormProps> = ({
   initialData,
-  onSubmit,
+  onSaveDraft,
+  onSubmitVerification,
   onCancel,
   isLoading,
-  isEditMode = false,
+  isSubmitting = false,
 }) => {
+  const isEditing = Boolean(initialData);
   const [apiError, setApiError] = useState<string | null>(null);
-
-  const defaultValues: TaxFormData = {
-    pan: initialData?.panLast4 ? `ABCDE${initialData.panLast4}` : '',
-    gstRegistered: initialData?.gstRegistered ?? false,
-    gstin: initialData?.gstin || '',
-    hasCin: Boolean(initialData?.cin),
-    cin: initialData?.cin || '',
-  };
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    reset,
     setError,
     formState: { errors },
   } = useForm<TaxFormData>({
-    resolver: zodResolver(taxFormSchema),
-    defaultValues,
+    resolver: zodResolver(makeTaxSchema(isEditing)),
+    defaultValues: {
+      pan: '',
+      gstRegistered: initialData?.gstRegistered ?? true,
+      gstin: initialData?.gstin || '',
+      cin: initialData?.cin || '',
+    },
     mode: 'onTouched',
   });
 
-  const watchedGstRegistered = watch('gstRegistered');
-  const watchedHasCin = watch('hasCin');
+  // Fetch and populate exact data from database when initialData loads or changes
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        pan: '', // Keep blank so placeholder instructs user: leave blank to retain existing
+        gstRegistered: initialData.gstRegistered ?? true,
+        gstin: initialData.gstin || '',
+        cin: initialData.cin || '',
+      });
+    }
+  }, [initialData, reset]);
 
-  const onFormSubmit = async (data: TaxFormData) => {
-    setApiError(null);
-    try {
-      const payload: SellerTaxRequestDTO = {
+  const watchedGstRegistered = watch('gstRegistered');
+
+  const preparePayload = (data: TaxFormData) => {
+    if (isEditing) {
+      const updatePayload: SellerTaxUpdateRequestDTO = {
+        gstRegistered: data.gstRegistered,
+        gstin: data.gstin.trim().toUpperCase(),
+        cin: data.cin.trim().toUpperCase(),
+      };
+      if (data.pan && data.pan.trim().length > 0) {
+        updatePayload.pan = data.pan.trim().toUpperCase();
+      }
+      return updatePayload;
+    } else {
+      const createPayload: SellerTaxRequestDTO = {
         pan: data.pan.trim().toUpperCase(),
         gstRegistered: data.gstRegistered,
-        gstin: data.gstRegistered ? data.gstin.trim().toUpperCase() : '',
-        cin: data.hasCin ? data.cin.trim().toUpperCase() : '',
+        gstin: data.gstin.trim().toUpperCase(),
+        cin: data.cin.trim().toUpperCase(),
       };
-      await onSubmit(payload);
+      return createPayload;
+    }
+  };
+
+  const handleDraftSubmit = async (data: TaxFormData) => {
+    setApiError(null);
+    try {
+      const payload = preparePayload(data);
+      await onSaveDraft(payload);
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
         if (err.fieldErrors) {
@@ -113,24 +148,55 @@ export const TaxDetailsForm: React.FC<TaxDetailsFormProps> = ({
     }
   };
 
+  const handleFinalSubmit = async (data: TaxFormData) => {
+    if (!onSubmitVerification) return;
+    setApiError(null);
+    try {
+      const payload = preparePayload(data);
+      await onSubmitVerification(payload);
+    } catch (err: unknown) {
+      if (err instanceof ApiClientError) {
+        if (err.fieldErrors) {
+          Object.entries(err.fieldErrors).forEach(([field, msg]) => {
+            setError(field as keyof TaxFormData, { message: msg });
+          });
+        }
+        setApiError(err.message);
+      } else {
+        setApiError('Failed to submit tax details.');
+      }
+    }
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit(onFormSubmit)}
-      className="bg-white rounded-xl border border-gray-200 p-6 shadow-card space-y-6"
-      noValidate
-    >
+    <form className="bg-white rounded-xl border border-gray-200 p-6 shadow-card space-y-6" noValidate>
       {apiError && (
         <Alert variant="error" message={apiError} onClose={() => setApiError(null)} />
+      )}
+
+      {initialData?.verificationStatus === 'REJECTED' && initialData.rejectionReason && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-xs text-red-950 space-y-1.5">
+          <div className="flex items-center gap-1.5 font-semibold text-red-900">
+            <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
+            <span>Reason for Previous Rejection:</span>
+          </div>
+          <div className="rounded-lg border border-red-200 bg-white/90 p-2.5 font-mono text-red-900 leading-relaxed shadow-xs">
+            "{initialData.rejectionReason}"
+          </div>
+          <p className="text-red-800">
+            Please update the affected identifiers below and click <strong>Save & Resubmit</strong>.
+          </p>
+        </div>
       )}
 
       {/* Form Header */}
       <div className="flex items-center justify-between pb-4 border-b border-gray-100">
         <div>
           <h3 className="text-base font-semibold text-gray-900">
-            {isEditMode ? 'Update Tax Identifiers' : 'Register Tax Identifiers'}
+            {isEditing ? 'Edit Tax Compliance Records' : 'Register Tax Identifiers'}
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">
-            Indian taxation statutory requirements for merchant payouts and invoicing.
+            All 3 statutory identifiers (PAN, GSTIN, and CIN) are compulsory.
           </p>
         </div>
         <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-md border border-gray-200">
@@ -138,19 +204,27 @@ export const TaxDetailsForm: React.FC<TaxDetailsFormProps> = ({
         </span>
       </div>
 
-      {/* Field 1: Permanent Account Number (PAN) */}
+      {/* Field 1: Permanent Account Number (PAN) - Compulsory */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label className="block text-sm font-medium text-gray-700">
             Permanent Account Number (PAN) *
           </label>
-          <span className="text-xs text-gray-400 font-mono">10 Characters</span>
+          {isEditing && initialData?.panLast4 && (
+            <span className="text-xs text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono">
+              Saved in DB: {initialData.maskedPan || `XXXXXX${initialData.panLast4}`}
+            </span>
+          )}
         </div>
         <div className="relative">
           <input
             type="text"
             maxLength={10}
-            placeholder="ABCDE1234F"
+            placeholder={
+              isEditing && initialData?.panLast4
+                ? `Leave empty to keep saved PAN (${initialData.maskedPan || `XXXXXX${initialData.panLast4}`})`
+                : 'ABCDE1234F'
+            }
             autoComplete="off"
             className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm font-mono uppercase tracking-wider text-gray-900 placeholder-gray-400 shadow-input transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 ${
               errors.pan ? 'border-red-400' : 'border-gray-300'
@@ -169,164 +243,146 @@ export const TaxDetailsForm: React.FC<TaxDetailsFormProps> = ({
         )}
         {!errors.pan && (
           <p className="text-xs text-gray-400">
-            Format: 5 alphabets, 4 digits, 1 alphabet. Trimmmed & stored encrypted.
+            {isEditing
+              ? 'Leave blank to preserve existing encrypted PAN, or type 10 characters to update.'
+              : 'Compulsory 10-character Indian PAN (5 letters, 4 digits, 1 letter).'}
           </p>
         )}
       </div>
 
-      {/* Field 2: GST Registration */}
-      <div className="space-y-3 pt-2 border-t border-gray-100">
-        <label className="block text-sm font-medium text-gray-700">
-          Goods and Services Tax (GST) *
-        </label>
+      {/* Field 2: GST Identification Number (GSTIN) - Compulsory + GST status button */}
+      <div className="space-y-1.5 pt-2 border-t border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <label className="block text-sm font-medium text-gray-700">
+            GST Identification Number (GSTIN) *
+          </label>
 
-        {/* GST Toggle Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              setValue('gstRegistered', true);
-            }}
-            className={`flex items-center justify-between p-3 rounded-lg border text-left text-xs font-medium transition-all duration-150 ${
-              watchedGstRegistered
-                ? 'border-brand-600 bg-brand-50/50 text-brand-900 ring-1 ring-brand-600'
-                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <Receipt className="h-4 w-4 text-brand-600" />
-              <div>
-                <div className="font-semibold text-gray-900">GST Registered</div>
-                <div className="text-[11px] text-gray-500">I have a valid 15-character GSTIN</div>
-              </div>
-            </div>
-            {watchedGstRegistered && <Check className="h-4 w-4 text-brand-600" />}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setValue('gstRegistered', false);
-              setValue('gstin', '');
-            }}
-            className={`flex items-center justify-between p-3 rounded-lg border text-left text-xs font-medium transition-all duration-150 ${
-              !watchedGstRegistered
-                ? 'border-brand-600 bg-brand-50/50 text-brand-900 ring-1 ring-brand-600'
-                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <X className="h-4 w-4 text-gray-400" />
-              <div>
-                <div className="font-semibold text-gray-900">Not Registered / Exempt</div>
-                <div className="text-[11px] text-gray-500">Below annual turnover threshold</div>
-              </div>
-            </div>
-            {!watchedGstRegistered && <Check className="h-4 w-4 text-brand-600" />}
-          </button>
+          {/* Clean toggle button right near GST label */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-gray-500">GST Status:</span>
+            <button
+              type="button"
+              onClick={() => setValue('gstRegistered', !watchedGstRegistered, { shouldValidate: true })}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border transition-all duration-150 ${
+                watchedGstRegistered
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300 shadow-xs'
+                  : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200'
+              }`}
+            >
+              <Check className={`h-3 w-3 ${watchedGstRegistered ? 'text-emerald-600' : 'text-gray-400'}`} />
+              <span>{watchedGstRegistered ? 'Registered' : 'Not Registered'}</span>
+            </button>
+          </div>
         </div>
 
-        {/* GSTIN Input (shown when registered) */}
-        {watchedGstRegistered && (
-          <div className="space-y-1.5 pt-1">
-            <Input
-              label="GST Identification Number (GSTIN) *"
-              placeholder="27ABCDE1234F1Z5"
-              autoComplete="off"
-              className="font-mono uppercase tracking-wider"
-              error={errors.gstin?.message}
-              hint="15-character state-code alphanumeric identification"
-              {...register('gstin')}
-              onChange={(e) => {
-                setValue('gstin', e.target.value.toUpperCase(), { shouldValidate: true });
-              }}
-            />
+        <div className="relative">
+          <input
+            type="text"
+            maxLength={15}
+            placeholder="27ABCDE1234F1Z5"
+            autoComplete="off"
+            className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm font-mono uppercase tracking-wider text-gray-900 placeholder-gray-400 shadow-input transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 ${
+              errors.gstin ? 'border-red-400' : 'border-gray-300'
+            }`}
+            {...register('gstin')}
+            onChange={(e) => {
+              setValue('gstin', e.target.value.toUpperCase(), { shouldValidate: true });
+            }}
+          />
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+            <Receipt className="h-4 w-4" />
           </div>
+        </div>
+        {errors.gstin && (
+          <p className="text-xs text-red-600 font-medium">{errors.gstin.message}</p>
+        )}
+        {!errors.gstin && (
+          <p className="text-xs text-gray-400">
+            Compulsory 15-character GST identification number.
+          </p>
         )}
       </div>
 
-      {/* Field 3: Corporate Identification Number (CIN) */}
-      <div className="space-y-3 pt-2 border-t border-gray-100">
-        <label className="block text-sm font-medium text-gray-700">
-          Corporate Identity (CIN)
-        </label>
-
-        {/* CIN Toggle Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              setValue('hasCin', true);
-            }}
-            className={`flex items-center justify-between p-3 rounded-lg border text-left text-xs font-medium transition-all duration-150 ${
-              watchedHasCin
-                ? 'border-brand-600 bg-brand-50/50 text-brand-900 ring-1 ring-brand-600'
-                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <Building2 className="h-4 w-4 text-brand-600" />
-              <div>
-                <div className="font-semibold text-gray-900">Incorporated Entity</div>
-                <div className="text-[11px] text-gray-500">Pvt Ltd, Public Ltd, or LLP (has CIN)</div>
-              </div>
-            </div>
-            {watchedHasCin && <Check className="h-4 w-4 text-brand-600" />}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setValue('hasCin', false);
-              setValue('cin', '');
-            }}
-            className={`flex items-center justify-between p-3 rounded-lg border text-left text-xs font-medium transition-all duration-150 ${
-              !watchedHasCin
-                ? 'border-brand-600 bg-brand-50/50 text-brand-900 ring-1 ring-brand-600'
-                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <X className="h-4 w-4 text-gray-400" />
-              <div>
-                <div className="font-semibold text-gray-900">Unincorporated Entity</div>
-                <div className="text-[11px] text-gray-500">Sole Proprietorship / Partnership</div>
-              </div>
-            </div>
-            {!watchedHasCin && <Check className="h-4 w-4 text-brand-600" />}
-          </button>
+      {/* Field 3: Company Identification Number (CIN) - Compulsory */}
+      <div className="space-y-1.5 pt-2 border-t border-gray-100">
+        <div className="flex items-center justify-between">
+          <label className="block text-sm font-medium text-gray-700">
+            Corporate Identification Number (CIN) *
+          </label>
+          <span className="text-xs text-gray-400 font-mono">21 Characters</span>
         </div>
-
-        {/* CIN Input (shown when corporate) */}
-        {watchedHasCin && (
-          <div className="space-y-1.5 pt-1">
-            <Input
-              label="Company Identification Number (CIN) *"
-              placeholder="U12345MH2020PTC123456"
-              autoComplete="off"
-              className="font-mono uppercase tracking-wider"
-              error={errors.cin?.message}
-              hint="21-character MCA corporate identifier (e.g. U... or L...)"
-              {...register('cin')}
-              onChange={(e) => {
-                setValue('cin', e.target.value.toUpperCase(), { shouldValidate: true });
-              }}
-            />
+        <div className="relative">
+          <input
+            type="text"
+            maxLength={21}
+            placeholder="U12345MH2020PTC123456"
+            autoComplete="off"
+            className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm font-mono uppercase tracking-wider text-gray-900 placeholder-gray-400 shadow-input transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 ${
+              errors.cin ? 'border-red-400' : 'border-gray-300'
+            }`}
+            {...register('cin')}
+            onChange={(e) => {
+              setValue('cin', e.target.value.toUpperCase(), { shouldValidate: true });
+            }}
+          />
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+            <Building2 className="h-4 w-4" />
           </div>
+        </div>
+        {errors.cin && (
+          <p className="text-xs text-red-600 font-medium">{errors.cin.message}</p>
+        )}
+        {!errors.cin && (
+          <p className="text-xs text-gray-400">
+            Compulsory 21-character MCA corporate identifier.
+          </p>
         )}
       </div>
 
-      {/* Action Footer */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+      {/* Action Footer with buttons adjusted according to status */}
+      <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-gray-100">
         {onCancel && (
-          <Button type="button" variant="secondary" size="sm" onClick={onCancel} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={onCancel}
+            disabled={isLoading || isSubmitting}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
         )}
-        <Button type="submit" variant="primary" size="sm" loading={isLoading}>
-          <Check className="h-4 w-4" />
-          {isEditMode ? 'Update Tax Records' : 'Save Tax Records'}
+
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          loading={isLoading}
+          disabled={isSubmitting}
+          onClick={handleSubmit(handleDraftSubmit)}
+          className="w-full sm:w-auto"
+        >
+          <Save className="h-4 w-4" />
+          {isEditing ? 'Save Changes' : 'Save Draft'}
         </Button>
+
+        {onSubmitVerification && (
+          <Button
+            type="button"
+            variant="primary"
+            size="sm"
+            loading={isSubmitting}
+            disabled={isLoading}
+            onClick={handleSubmit(handleFinalSubmit)}
+            className="w-full sm:w-auto"
+          >
+            <Send className="h-4 w-4" />
+            {initialData?.verificationStatus === 'REJECTED'
+              ? 'Save & Resubmit'
+              : 'Save & Submit for Verification'}
+          </Button>
+        )}
       </div>
     </form>
   );

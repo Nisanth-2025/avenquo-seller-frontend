@@ -3,11 +3,18 @@
  * Exactly matching backend SellerTaxRequestDTO, SellerTaxResponseDTO, and SellerTaxUpdateRequestDTO
  */
 
+export type SellerTaxVerificationStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'REJECTED';
+
 export interface SellerTaxRequestDTO {
   pan: string;
   gstRegistered: boolean;
-  gstin: string; // 15-character GSTIN or "" if exempt/unregistered
-  cin: string;   // 21-character CIN or "" if not incorporated
+  gstin: string; // 15-character GSTIN
+  cin: string;   // 21-character CIN
 }
 
 export interface SellerTaxUpdateRequestDTO {
@@ -23,7 +30,9 @@ export interface SellerTaxResponseDTO {
   panLast4: string;
   gstin: string;
   gstRegistered: boolean;
+  rejectionReason?: string | null;
   cin: string;
+  verificationStatus?: SellerTaxVerificationStatus;
   createdAt?: string | null;
   updatedAt?: string | null;
 }

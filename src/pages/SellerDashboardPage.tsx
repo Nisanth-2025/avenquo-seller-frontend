@@ -14,6 +14,9 @@ import {
   Clock,
   Sparkles,
   Receipt,
+  FileCheck,
+  Landmark,
+  MapPin,
 } from 'lucide-react';
 
 export const SellerDashboardPage: React.FC = () => {
@@ -67,6 +70,24 @@ export const SellerDashboardPage: React.FC = () => {
               >
                 Tax Compliance
               </Link>
+              <Link
+                to="/dashboard/documents"
+                className="text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                Documents
+              </Link>
+              <Link
+                to="/dashboard/bank"
+                className="text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                Bank & Payouts
+              </Link>
+              <Link
+                to="/dashboard/address"
+                className="text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                Business Address
+              </Link>
             </nav>
           </div>
 
@@ -92,7 +113,22 @@ export const SellerDashboardPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link to="/dashboard/address">
+              <Button size="sm" variant="secondary">
+                <MapPin className="h-4 w-4" /> Address
+              </Button>
+            </Link>
+            <Link to="/dashboard/bank">
+              <Button size="sm" variant="secondary">
+                <Landmark className="h-4 w-4" /> Bank Account
+              </Button>
+            </Link>
+            <Link to="/dashboard/documents">
+              <Button size="sm" variant="secondary">
+                <FileCheck className="h-4 w-4" /> Documents
+              </Button>
+            </Link>
             <Link to="/dashboard/tax">
               <Button size="sm" variant="secondary">
                 <Receipt className="h-4 w-4" /> Tax Details
@@ -203,7 +239,7 @@ export const SellerDashboardPage: React.FC = () => {
         )}
 
         {/* ── Feature Cards ── */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {/* Store Profile Card */}
           <Link
             to="/dashboard/profile"
@@ -258,6 +294,93 @@ export const SellerDashboardPage: React.FC = () => {
             </div>
             <div className="mt-4 pt-3 border-t border-gray-100 flex items-center text-xs font-semibold text-brand-600 group-hover:translate-x-1 transition-transform">
               <span>Manage Tax Records</span>
+              <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </div>
+          </Link>
+
+          {/* Documents Compliance Card */}
+          <Link
+            to="/dashboard/documents"
+            className="group flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-card hover:border-brand-300 hover:shadow-md transition-all duration-150"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 group-hover:bg-brand-50 transition-colors">
+                  <FileCheck className="h-5 w-5 text-gray-500 group-hover:text-brand-600 transition-colors" />
+                </div>
+                <span className="text-[11px] font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                  KYC Verified
+                </span>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 group-hover:text-brand-600 transition-colors">
+                  Statutory Documents
+                </h3>
+                <p className="mt-0.5 text-xs text-gray-500 leading-relaxed">
+                  Upload PAN, GST certificates, and address proof for KYC review
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-gray-100 flex items-center text-xs font-semibold text-brand-600 group-hover:translate-x-1 transition-transform">
+              <span>Upload & View Docs</span>
+              <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </div>
+          </Link>
+
+          {/* Bank & Payouts Card */}
+          <Link
+            to="/dashboard/bank"
+            className="group flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-card hover:border-brand-300 hover:shadow-md transition-all duration-150"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 group-hover:bg-brand-50 transition-colors">
+                  <Landmark className="h-5 w-5 text-gray-500 group-hover:text-brand-600 transition-colors" />
+                </div>
+                <span className="text-[11px] font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                  Direct Payout
+                </span>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 group-hover:text-brand-600 transition-colors">
+                  Bank & Payouts
+                </h3>
+                <p className="mt-0.5 text-xs text-gray-500 leading-relaxed">
+                  Manage settlement bank account, IFSC code, and remittance routing
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-gray-100 flex items-center text-xs font-semibold text-brand-600 group-hover:translate-x-1 transition-transform">
+              <span>Manage Bank Details</span>
+              <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </div>
+          </Link>
+
+          {/* Business Address Card */}
+          <Link
+            to="/dashboard/address"
+            className="group flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-card hover:border-brand-300 hover:shadow-md transition-all duration-150"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 group-hover:bg-brand-50 transition-colors">
+                  <MapPin className="h-5 w-5 text-gray-500 group-hover:text-brand-600 transition-colors" />
+                </div>
+                <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                  Principal Place
+                </span>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 group-hover:text-brand-600 transition-colors">
+                  Business Address
+                </h3>
+                <p className="mt-0.5 text-xs text-gray-500 leading-relaxed">
+                  Manage registered operating address, pickup point, and PIN code
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-gray-100 flex items-center text-xs font-semibold text-brand-600 group-hover:translate-x-1 transition-transform">
+              <span>Manage Address</span>
               <ArrowRight className="h-3.5 w-3.5 ml-1" />
             </div>
           </Link>
