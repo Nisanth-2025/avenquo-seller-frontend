@@ -9,6 +9,7 @@ import { ApprovedStorefrontProfileView } from '../features/seller/components/App
 import { Button } from '../components/ui/Button';
 import { CreateSellerApplicationDTO, PatchSellerProfileDTO } from '../types/seller.types';
 import { ArrowLeft, RefreshCw, Store, ShieldCheck } from 'lucide-react';
+import { SellerHeader } from '../components/navigation/SellerHeader';
 
 export const SellerProfilePage: React.FC = () => {
   const {
@@ -107,7 +108,9 @@ export const SellerProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <SellerHeader activeTab="account" />
+
       {/* ── Sub-header Navigation ── */}
       <div className="border-b border-gray-200 bg-white sticky top-0 z-20">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">

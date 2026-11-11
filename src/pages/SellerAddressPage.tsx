@@ -11,6 +11,7 @@ import {
   MapPin,
   ShieldCheck,
 } from 'lucide-react';
+import { SellerHeader } from '../components/navigation/SellerHeader';
 import type { SellerAddressRequestDTO } from '../types/address.types';
 
 export const SellerAddressPage: React.FC = () => {
@@ -92,7 +93,9 @@ export const SellerAddressPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16">
+    <div className="min-h-screen bg-gray-50 pb-16 flex flex-col">
+      <SellerHeader activeTab="account" />
+
       {/* Top sticky nav */}
       <header className="border-b border-gray-200 bg-white sticky top-0 z-20">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">

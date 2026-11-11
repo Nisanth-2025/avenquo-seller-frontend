@@ -12,6 +12,10 @@ export const API_ENDPOINTS = {
     STATES_BY_COUNTRY:  (countryId: number | string) => `/api/v1/locations/countries/${countryId}/states`,
     DISTRICTS_BY_STATE: (stateId: number | string) => `/api/v1/locations/states/${stateId}/districts`,
   },
+  CATEGORIES: {
+    LIST:               '/api/v1/categories',
+    BY_ID:              (categoryId: number | string) => `/api/v1/categories/${categoryId}`,
+  },
   SELLERS: {
     APPLICATION:        '/api/v1/sellers/application',
     APPLICATION_SUBMIT: '/api/v1/sellers/application/submit',
@@ -25,5 +29,14 @@ export const API_ENDPOINTS = {
     BANK:               '/api/v1/sellers/bank-details',
     BANK_SUBMIT:        '/api/v1/sellers/bank-details/submit',
     ADDRESS:            '/api/v1/sellers/address',
+  },
+  PRODUCTS: {
+    BASE:               '/api/v1/seller/products',
+    BY_ID:              (productId: number | string) => `/api/v1/seller/products/${productId}`,
+    STATUS:             (productId: number | string) => `/api/v1/seller/products/${productId}/status`,
+    IMAGES:             (productId: number | string) => `/api/v1/seller/products/${productId}/images`,
+    IMAGE_BY_ID:        (productId: number | string, imageId: number | string) => `/api/v1/seller/products/${productId}/images/${imageId}`,
+    IMAGE_PRIMARY:      (productId: number | string, imageId: number | string) => `/api/v1/seller/products/${productId}/images/${imageId}/primary`,
+    IMAGES_REORDER:     (productId: number | string) => `/api/v1/seller/products/${productId}/images/reorder`,
   },
 } as const;
