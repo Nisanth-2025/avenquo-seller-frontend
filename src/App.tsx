@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, PublicRoute } from './components/RouteGuards';
 import SellerAuthPage from './pages/SellerAuthPage';
 import SellerDashboardPage from './pages/SellerDashboardPage';
+import SellerProfilePage from './pages/SellerProfilePage';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -23,6 +24,8 @@ const App: React.FC = () => (
           {/* Protected: redirect to auth if not signed in */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<SellerDashboardPage />} />
+            <Route path="/dashboard/profile" element={<SellerProfilePage />} />
+            <Route path="/profile" element={<Navigate to="/dashboard/profile" replace />} />
           </Route>
 
           {/* Root redirect */}
