@@ -62,6 +62,14 @@ export function useProductMutations() {
     },
   });
 
+  const deleteProductMutation = useMutation({
+    mutationFn: (productId: number | string) => productService.deleteProduct(productId),
+    onSuccess: (_data, productId) => {
+      queryClient.removeQueries({ queryKey: [...PRODUCTS_QUERY_KEY, 'detail', productId] });
+      invalidate();
+    },
+  });
+
   const updateStatusMutation = useMutation({
     mutationFn: ({
       productId,
@@ -146,6 +154,7 @@ export function useProductMutations() {
     createMutation,
     updateMutation,
     updateStatusMutation,
+    deleteProductMutation,
     addImagesMutation,
     replaceImageMutation,
     deleteImageMutation,

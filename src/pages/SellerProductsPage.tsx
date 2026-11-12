@@ -31,6 +31,7 @@ import {
   ImageIcon,
   Boxes,
   Power,
+  Trash2,
   TrendingUp,
   AlertTriangle,
 } from 'lucide-react';
@@ -64,7 +65,7 @@ export const SellerProductsPage: React.FC = () => {
 
   // React Query hooks
   const { data, isLoading, isError, error, refetch, isFetching } = useSellerProducts(params);
-  const { updateStatusMutation } = useProductMutations();
+  const { updateStatusMutation, deleteProductMutation } = useProductMutations();
 
   // Check URL query params on mount (e.g. ?new=1&categoryId=12)
   const queryNew = searchParams.get('new');
@@ -136,6 +137,24 @@ export const SellerProductsPage: React.FC = () => {
       setNotice({
         type: 'error',
         message: err instanceof Error ? err.message : 'Failed to update product status.',
+      });
+    }
+  };
+
+  const handleDeleteProduct = async (product: ProductResponseDTO) => {
+    const confirmed = window.confirm(
+      `Delete "${product.productName}"? This action cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteProductMutation.mutateAsync(product.productId);
+      if (productForDetail?.productId === product.productId) setProductForDetail(null);
+      setNotice({ type: 'success', message: `Product "${product.productName}" was deleted.` });
+    } catch (err: unknown) {
+      setNotice({
+        type: 'error',
+        message: err instanceof Error ? err.message : 'Failed to delete product.',
       });
     }
   };
@@ -520,6 +539,17 @@ export const SellerProductsPage: React.FC = () => {
                       <ImageIcon className="h-3.5 w-3.5" />
                     </button>
 
+                    <button
+                      type="button"
+                      disabled={deleteProductMutation.isPending}
+                      onClick={() => handleDeleteProduct(product)}
+                      className="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                      title="Delete Product"
+                      aria-label={`Delete ${product.productName}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+
                     {/* Quick Status Toggle */}
                     <button
                       type="button"
@@ -675,6 +705,17 @@ export const SellerProductsPage: React.FC = () => {
                               title="Images"
                             >
                               <ImageIcon className="h-4 w-4" />
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={deleteProductMutation.isPending}
+                              onClick={() => handleDeleteProduct(product)}
+                              className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors disabled:opacity-50"
+                              title="Delete product"
+                              aria-label={`Delete ${product.productName}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
                             </button>
 
                             <button

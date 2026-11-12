@@ -74,6 +74,18 @@ export const productService = {
   },
 
   /**
+   * Delete a seller product.
+   * DELETE /api/v1/seller/products/{productId}
+   */
+  async deleteProduct(productId: number | string): Promise<void> {
+    try {
+      await apiAxios.delete(API_ENDPOINTS.PRODUCTS.BY_ID(productId));
+    } catch (err) {
+      throw extractApiError(err);
+    }
+  },
+
+  /**
    * Update product fields.
    * PUT /api/v1/seller/products/{productId}
    */
