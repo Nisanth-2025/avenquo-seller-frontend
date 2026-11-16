@@ -10,7 +10,7 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading:       boolean;
   loginWithTokens: (tokens: AuthenticationResponseDTO) => void;
-  logout:          () => void;
+  logout:          (options?: { revokeSession?: boolean }) => void;
   refreshSession:  () => Promise<boolean>;
 }
 
@@ -75,7 +75,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback((options?: { revokeSession?: boolean }) => {
+    const currentRefreshToken = tokenStorage.getRefreshToken();
+    const currentAccessToken = tokenStorage.getAccessToken();
+    if (options?.revokeSession !== false && currentRefreshToken && currentAccessToken) {
+      void authService.logout({ tokenHash: currentRefreshToken }, currentAccessToken).catch(() => undefined);
+    }
     tokenStorage.clearTokens();
     setUser(null);
     setAccessToken(null);

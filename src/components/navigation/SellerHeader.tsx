@@ -94,6 +94,12 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
       desc: 'Operating premises & dispatch hub',
       icon: MapPin,
     },
+    {
+      to: '/dashboard/security',
+      label: 'Security & Sessions',
+      desc: 'Manage password and sign-in sessions',
+      icon: ShieldCheck,
+    },
   ];
 
   return (
@@ -237,7 +243,7 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
                   <span>Seller Account Modules</span>
                 </div>
 
-                {/* The 5 Modules */}
+                {/* Seller account modules */}
                 <div className="space-y-0.5">
                   {sellerAccountModules.map((item) => {
                     const Icon = item.icon;
@@ -379,7 +385,7 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
           <div className="border-t border-gray-100 pt-2">
             <button
               type="button"
-              onClick={logout}
+                onClick={() => logout()}
               className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50"
             >
               <LogOut className="h-4 w-4" />

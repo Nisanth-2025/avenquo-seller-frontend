@@ -1,11 +1,17 @@
 // Centralized API endpoint paths — matching backend controllers exactly
 export const API_ENDPOINTS = {
   AUTH: {
-    SIGN_UP:            '/api/v1/auth/user/signup',
-    VERIFY_SIGNUP_OTP:  '/api/v1/auth/user/verify/signup-otp',
-    SIGN_IN:            '/api/v1/auth/user/signin',
-    VERIFY_SIGNIN_OTP:  '/api/v1/auth/user/verify/signin-otp',
-    REFRESH:            '/api/v1/auth/user/refresh',
+    SIGN_UP:            '/api/v1/auth/users/signup',
+    VERIFY_SIGNUP_OTP:  '/api/v1/auth/users/verify/signup',
+    SIGN_IN:            '/api/v1/auth/users/signin',
+    VERIFY_SIGNIN_OTP:  '/api/v1/auth/users/verify/signin',
+    PASSWORD_LOGIN:     '/api/v1/auth/users/password-login',
+    SET_PASSWORD:       '/api/v1/auth/users/set-password',
+    CHANGE_PASSWORD:    '/api/v1/auth/users/change-password',
+    LOGOUT:             '/api/v1/auth/users/logout',
+    REFRESH:            '/api/v1/auth/sessions/refresh',
+    SESSIONS:           '/api/v1/auth/sessions',
+    SESSION_BY_ID:      (sessionId: number | string) => `/api/v1/auth/sessions/${sessionId}`,
   },
   LOCATIONS: {
     COUNTRIES:          '/api/v1/locations/countries',

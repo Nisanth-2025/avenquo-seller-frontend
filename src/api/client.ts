@@ -28,7 +28,37 @@ export const apiAxios = axios.create({
 });
 
 // Mutex / singleton promise to guarantee only one refresh call is in flight
-let activeRefreshPromise: Promise<string | null> | null = null;
+let activeRefreshPromise: Promise<AuthenticationResponseDTO> | null = null;
+
+export function rotateRefreshToken(refreshToken: string): Promise<AuthenticationResponseDTO> {
+  if (activeRefreshPromise) return activeRefreshPromise;
+
+  activeRefreshPromise = (async () => {
+    try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
+      const response = await axios.post<AuthenticationResponseDTO>(
+        `${baseUrl}${API_ENDPOINTS.AUTH.REFRESH}`,
+        { refreshToken: refreshToken.trim() },
+        { headers: { 'Content-Type': 'application/json' } },
+      );
+      const newTokens = response.data;
+      if (!newTokens?.accessToken || !newTokens.refreshToken) {
+        throw new Error('Invalid token response from refresh endpoint');
+      }
+      tokenStorage.setTokens(newTokens);
+      tokenStorage.emitTokensUpdated(newTokens);
+      return newTokens;
+    } catch (error: unknown) {
+      tokenStorage.clearTokens();
+      tokenStorage.emitSessionExpired();
+      throw error;
+    } finally {
+      activeRefreshPromise = null;
+    }
+  })();
+
+  return activeRefreshPromise;
+}
 
 /**
  * Ensures an active, unexpired JWT access token is available.
@@ -55,63 +85,33 @@ export async function getOrRefreshToken(): Promise<string | null> {
     return null;
   }
 
-  // If another request already started refreshing, wait for that same promise
-  if (activeRefreshPromise) {
-    return activeRefreshPromise;
-  }
-
-  activeRefreshPromise = (async () => {
-    try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
-      // Use raw unintercepted axios to avoid interceptor loop
-      const response = await axios.post<AuthenticationResponseDTO>(
-        `${baseUrl}${API_ENDPOINTS.AUTH.REFRESH}`,
-        { refreshToken: currentRefresh.trim() },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-
-      const newTokens = response.data;
-      if (newTokens && newTokens.accessToken) {
-        tokenStorage.setTokens(newTokens);
-        tokenStorage.emitTokensUpdated(newTokens);
-        return newTokens.accessToken;
-      }
-      throw new Error('Invalid token response from refresh endpoint');
-    } catch (err: unknown) {
-      // Refresh token has expired or been revoked by server
-      tokenStorage.clearTokens();
-      tokenStorage.emitSessionExpired();
-      throw err;
-    } finally {
-      activeRefreshPromise = null;
-    }
-  })();
-
-  return activeRefreshPromise;
+  return rotateRefreshToken(currentRefresh).then((tokens) => tokens.accessToken);
 }
 
-// Request Interceptor: Decodes JWT on each request and auto-refreshes if expired
-apiAxios.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  const isAuthEndpoint =
-    config.url?.includes('/api/v1/auth/user/signin') ||
-    config.url?.includes('/api/v1/auth/user/signup') ||
-    config.url?.includes('/api/v1/auth/user/refresh') ||
-    config.url?.includes('/api/v1/auth/user/verify');
+// Public endpoints never need an access token and must never recurse through refresh.
+const publicAuthEndpoints = [
+  API_ENDPOINTS.AUTH.SIGN_UP,
+  API_ENDPOINTS.AUTH.VERIFY_SIGNUP_OTP,
+  API_ENDPOINTS.AUTH.SIGN_IN,
+  API_ENDPOINTS.AUTH.VERIFY_SIGNIN_OTP,
+  API_ENDPOINTS.AUTH.PASSWORD_LOGIN,
+  API_ENDPOINTS.AUTH.REFRESH,
+];
 
-  if (!isAuthEndpoint) {
+function isPublicAuthEndpoint(url?: string): boolean {
+  return Boolean(url && publicAuthEndpoints.some((endpoint) => url.includes(endpoint)));
+}
+
+// Attach and refresh credentials only for protected endpoints.
+apiAxios.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+  if (!isPublicAuthEndpoint(config.url)) {
     try {
       const validToken = await getOrRefreshToken();
-      if (validToken) {
+      if (validToken && !config.headers.get('Authorization')) {
         config.headers.set('Authorization', `Bearer ${validToken}`);
       }
     } catch {
-      // If refresh failed (e.g. refresh token expired), continue and let backend 401 handle redirection
-    }
-  } else {
-    // For verify endpoints or other auth routes, attach token if present and not set
-    const existingToken = tokenStorage.getAccessToken();
-    if (existingToken && !config.headers.get('Authorization')) {
-      config.headers.set('Authorization', `Bearer ${existingToken}`);
+      // Let the protected request surface its authentication error after refresh fails.
     }
   }
 
@@ -129,9 +129,10 @@ apiAxios.interceptors.response.use(
   async (error: unknown) => {
     if (error instanceof AxiosError && error.response?.status === 401) {
       const originalRequest = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
-      const isRefreshRequest = originalRequest?.url?.includes('/api/v1/auth/user/refresh');
+      const isRefreshRequest = originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH);
+      const isPublicAuthRequest = isPublicAuthEndpoint(originalRequest?.url);
 
-      if (originalRequest && !originalRequest._retry && !isRefreshRequest) {
+      if (originalRequest && !originalRequest._retry && !isRefreshRequest && !isPublicAuthRequest) {
         originalRequest._retry = true;
         try {
           const freshAccessToken = await getOrRefreshToken();

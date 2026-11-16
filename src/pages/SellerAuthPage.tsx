@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, ArrowRight } from 'lucide-react';
+import { Mail, ArrowRight, LockKeyhole } from 'lucide-react';
 
 import { AuthLeftPanel } from '../features/auth/components/AuthLeftPanel';
 import { Button } from '../components/ui/Button';
@@ -29,15 +29,22 @@ type EmailForm = z.infer<typeof emailSchema>;
 // ── Main page ────────────────────────────────────────────────────────────────
 const SellerAuthPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { loginWithTokens } = useAuth();
 
   const [mode, setMode] = useState<AuthMode>('signin');
+  const [loginMethod, setLoginMethod] = useState<'otp' | 'password'>('otp');
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [step, setStep] = useState<AuthStep>('email');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [otpError, setOtpError] = useState('');
   const [apiError, setApiError] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState(() => {
+    const state = location.state as { notice?: string } | null;
+    return state?.notice ?? '';
+  });
   const [submitting, setSubmitting] = useState(false);
 
   const countdown = useOtpCountdown();
@@ -47,6 +54,7 @@ const SellerAuthPage: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
+    clearErrors,
   } = useForm<EmailForm>({
     resolver: zodResolver(emailSchema),
     mode: 'onTouched',
@@ -55,9 +63,19 @@ const SellerAuthPage: React.FC = () => {
   // ── Step 1: request OTP ───────────────────────────────────────────────────
   const onEmailSubmit = async (data: EmailForm) => {
     setApiError('');
+    setPasswordError('');
+    if (mode === 'signin' && loginMethod === 'password' && !password) {
+      setPasswordError('Password is required');
+      return;
+    }
     try {
       if (mode === 'signup') {
         await authService.signUp({ email: data.email });
+      } else if (loginMethod === 'password') {
+        const tokens = await authService.passwordLogin({ email: data.email, password });
+        loginWithTokens(tokens);
+        navigate('/dashboard', { replace: true });
+        return;
       } else {
         await authService.signIn({ email: data.email });
       }
@@ -67,6 +85,7 @@ const SellerAuthPage: React.FC = () => {
     } catch (err) {
       if (err instanceof ApiClientError) {
         if (err.fieldErrors?.email) setError('email', { message: err.fieldErrors.email });
+        else if (err.fieldErrors?.password) setPasswordError(err.fieldErrors.password);
         else setApiError(err.message);
       } else {
         setApiError('Unable to send code. Check your connection.');
@@ -126,6 +145,16 @@ const SellerAuthPage: React.FC = () => {
 
   const switchMode = (m: AuthMode) => {
     setMode(m); setStep('email'); setApiError(''); setSuccessMsg(''); setOtp(''); setOtpError('');
+    setPassword(''); setPasswordError(''); clearErrors('email');
+    if (m === 'signup') setLoginMethod('otp');
+  };
+
+  const switchLoginMethod = (method: 'otp' | 'password') => {
+    setLoginMethod(method);
+    clearErrors('email');
+    setApiError('');
+    setPassword('');
+    setPasswordError('');
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -173,6 +202,13 @@ const SellerAuthPage: React.FC = () => {
                   </div>
                 </div>
 
+                {mode === 'signin' && (
+                  <div className="mb-6 flex rounded-lg bg-gray-100 p-1" role="group" aria-label="Sign-in method">
+                    <button type="button" onClick={() => switchLoginMethod('otp')} className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${loginMethod === 'otp' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`} aria-pressed={loginMethod === 'otp'}>Email code</button>
+                    <button type="button" onClick={() => switchLoginMethod('password')} className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${loginMethod === 'password' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`} aria-pressed={loginMethod === 'password'}><LockKeyhole className="mr-1 inline h-3.5 w-3.5" />Password</button>
+                  </div>
+                )}
+
                 {/* ── Heading ── */}
                 <div className="mb-6">
                   <h2 className="text-2xl font-semibold text-gray-900">
@@ -180,7 +216,9 @@ const SellerAuthPage: React.FC = () => {
                   </h2>
                   <p className="mt-1.5 text-sm text-gray-500">
                     {mode === 'signin'
-                      ? 'Enter your email and we\'ll send a one-time sign-in code.'
+                      ? loginMethod === 'password'
+                        ? 'Sign in with the password linked to your account.'
+                        : 'Enter your email and we\'ll send a one-time sign-in code.'
                       : 'Enter your email to create your seller account.'}
                   </p>
                 </div>
@@ -208,9 +246,21 @@ const SellerAuthPage: React.FC = () => {
                     {...register('email')}
                   />
 
+                  {mode === 'signin' && loginMethod === 'password' && (
+                    <Input
+                      label="Password"
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(event) => { setPassword(event.target.value); setPasswordError(''); }}
+                      error={passwordError}
+                    />
+                  )}
+
                   <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
                     {isSubmitting ? '' : (
-                      <>{mode === 'signin' ? 'Send sign-in code' : 'Send verification code'} <ArrowRight className="h-4 w-4" /></>
+                      <>{mode === 'signin' ? loginMethod === 'password' ? 'Sign in' : 'Send sign-in code' : 'Send verification code'} <ArrowRight className="h-4 w-4" /></>
                     )}
                   </Button>
                 </form>

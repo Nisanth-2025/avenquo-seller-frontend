@@ -2,8 +2,28 @@
 
 export interface SignUpRequestDTO   { email: string }
 export interface SignInRequestDTO   { email: string }
+export interface PasswordLoginRequestDTO { email: string; password: string }
+export interface PasswordRequestDTO { newPassword: string; confirmPassword: string }
+export interface LogoutRequestDTO { tokenHash: string }
 export interface VerifyOtpRequestDTO { email: string; otp: string }
 export interface RefreshTokenRequestDTO { refreshToken: string }
+
+export interface AuthSessionDTO {
+  sessionId: number;
+  createdAt: string;
+  expiresAt: string;
+  deviceInfo: string | null;
+  revokedAt: string | null;
+}
+
+export interface AuthSessionsPageDTO {
+  content: AuthSessionDTO[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  lastPage: boolean;
+}
 
 export interface AuthenticationResponseDTO {
   accessToken:  string;
