@@ -206,9 +206,9 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
                 <span className="text-xs font-semibold text-gray-900 max-w-[120px] truncate leading-tight">
                   {application?.storeName || user?.email?.split('@')[0] || 'Seller Account'}
                 </span>
-                <span className="text-[10px] text-gray-500 flex items-center gap-1 leading-none mt-0.5">
-                  <span>Seller Account</span>
-                  {status === 'APPROVED' && <ShieldCheck className="h-3 w-3 text-emerald-600" />}
+                <span className={`text-[10px] flex items-center gap-1 leading-none mt-0.5 ${hasSellerRole ? 'text-emerald-700' : 'text-gray-500'}`}>
+                  <span>{hasSellerRole ? 'Verified seller' : 'Unverified'}</span>
+                  {hasSellerRole && <ShieldCheck className="h-3 w-3 text-emerald-600" />}
                 </span>
               </div>
               <ChevronDown
@@ -230,7 +230,15 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
                       </p>
                       <p className="text-[11px] text-gray-500 truncate">{user?.email}</p>
                     </div>
-                    {status && <ApplicationStatusBadge status={status} size="sm" />}
+                    <span
+                      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                        hasSellerRole
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                          : 'border-gray-200 bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      {hasSellerRole ? 'Verified' : 'Unverified'}
+                    </span>
                   </div>
                   {application?.storeSlug && (
                     <div className="mt-1.5 pt-1.5 border-t border-gray-200/50 flex items-center justify-between text-[11px] text-gray-500">
