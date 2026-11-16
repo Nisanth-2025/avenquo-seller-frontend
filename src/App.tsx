@@ -12,6 +12,7 @@ import SellerTaxPage from './pages/SellerTaxPage';
 import SellerDocumentsPage from './pages/SellerDocumentsPage';
 import SellerBankPage from './pages/SellerBankPage';
 import SellerAddressPage from './pages/SellerAddressPage';
+import SellerSecurityPage from './pages/SellerSecurityPage';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -40,6 +41,7 @@ const App: React.FC = () => (
             <Route path="/dashboard/documents" element={<SellerDocumentsPage />} />
             <Route path="/dashboard/bank" element={<SellerBankPage />} />
             <Route path="/dashboard/address" element={<SellerAddressPage />} />
+            <Route path="/dashboard/security" element={<SellerSecurityPage />} />
 
             {/* Convenience Aliases & Redirects */}
             <Route path="/products" element={<Navigate to="/dashboard/products" replace />} />
