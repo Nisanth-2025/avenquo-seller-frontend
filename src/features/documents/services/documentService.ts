@@ -20,12 +20,7 @@ export const documentService = {
 
       const { data } = await apiAxios.post<SellerDocumentResponseDTO>(
         API_ENDPOINTS.SELLERS.DOCUMENTS,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        formData
       );
       return data;
     } catch (err) {

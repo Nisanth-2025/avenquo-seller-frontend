@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
-import { ProtectedRoute, PublicRoute } from './components/RouteGuards';
+import { ProtectedRoute, PublicRoute, SellerRoleRoute } from './components/RouteGuards';
 import SellerAuthPage from './pages/SellerAuthPage';
 import SellerDashboardPage from './pages/SellerDashboardPage';
 import SellerProductsPage from './pages/SellerProductsPage';
@@ -32,8 +32,10 @@ const App: React.FC = () => (
           <Route element={<ProtectedRoute />}>
             {/* Core Operations Dashboard */}
             <Route path="/dashboard" element={<SellerDashboardPage />} />
-            <Route path="/dashboard/products" element={<SellerProductsPage />} />
-            <Route path="/dashboard/categories" element={<SellerCategoriesPage />} />
+            <Route element={<SellerRoleRoute />}>
+              <Route path="/dashboard/products" element={<SellerProductsPage />} />
+              <Route path="/dashboard/categories" element={<SellerCategoriesPage />} />
+            </Route>
 
             {/* Seller Account Modules (accessed via top-right profile menu) */}
             <Route path="/dashboard/profile" element={<SellerProfilePage />} />

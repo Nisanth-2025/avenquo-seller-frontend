@@ -27,7 +27,11 @@ export const SellerTaxPage: React.FC = () => {
   const [apiError, setApiError] = useState<string | null>(null);
 
   const verificationStatus = taxDetails?.verificationStatus || 'DRAFT';
-  const isLocked = verificationStatus === 'SUBMITTED' || verificationStatus === 'UNDER_REVIEW' || verificationStatus === 'APPROVED';
+  const isLocked =
+    verificationStatus === 'SUBMITTED' ||
+    verificationStatus === 'UNDER_REVIEW' ||
+    verificationStatus === 'APPROVED' ||
+    verificationStatus === 'REJECTED';
 
   const handleSaveTax = async (data: SellerTaxRequestDTO | SellerTaxUpdateRequestDTO) => {
     setApiError(null);

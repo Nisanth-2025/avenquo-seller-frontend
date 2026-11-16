@@ -76,7 +76,7 @@ export const sellerService = {
    */
   async patchProfile(dto: PatchSellerProfileDTO): Promise<SellerProfileResponseDTO> {
     try {
-      const formData = new FormData();
+      const formData = new URLSearchParams();
       if (dto.description !== undefined) formData.append('description', dto.description);
       if (dto.supportEmail !== undefined) formData.append('supportEmail', dto.supportEmail);
       if (dto.supportPhone !== undefined) formData.append('supportPhone', dto.supportPhone);

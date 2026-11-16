@@ -8,6 +8,7 @@ export interface AuthContextType {
   accessToken:     string | null;
   refreshToken:    string | null;
   isAuthenticated: boolean;
+  hasSellerRole:   boolean;
   isLoading:       boolean;
   loginWithTokens: (tokens: AuthenticationResponseDTO) => void;
   logout:          (options?: { revokeSession?: boolean }) => void;
@@ -162,10 +163,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, [applyTokens, logout]);
 
+  const hasSellerRole = Boolean(
+    user?.roles.some((role) => role.trim().toUpperCase().replace(/^ROLE_/, '') === 'SELLER')
+  );
+
   return (
     <AuthContext.Provider
       value={{
         user,
+        hasSellerRole,
         accessToken,
         refreshToken,
         isAuthenticated,

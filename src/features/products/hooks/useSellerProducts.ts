@@ -9,10 +9,11 @@ import {
 
 export const PRODUCTS_QUERY_KEY = ['seller_products'];
 
-export function useSellerProducts(params?: ProductListParams) {
+export function useSellerProducts(params?: ProductListParams, enabled = true) {
   return useQuery({
     queryKey: [...PRODUCTS_QUERY_KEY, 'list', params],
     queryFn: () => productService.listProducts(params),
+    enabled,
     staleTime: 30_000,
   });
 }

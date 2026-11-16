@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 export const SellerDashboardPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, hasSellerRole } = useAuth();
   const { application, isApproved, isChangesRequired, isSubmittedOrReview, isDraft, hasApplication } =
     useSellerApplication();
 
@@ -40,7 +40,7 @@ export const SellerDashboardPage: React.FC = () => {
     pageSize: 8,
     sortBy: 'createdAt',
     sortOrder: 'desc',
-  });
+  }, hasSellerRole);
 
   // Load categories (first 6 for dashboard preview)
   const { data: categoryData, isLoading: categoriesLoading } = useCategories({
@@ -48,7 +48,7 @@ export const SellerDashboardPage: React.FC = () => {
     pageSize: 6,
     sortBy: 'categoryName',
     sortOrder: 'asc',
-  });
+  }, hasSellerRole);
 
   const { updateStatusMutation } = useProductMutations();
 
@@ -73,6 +73,28 @@ export const SellerDashboardPage: React.FC = () => {
       status: newStatus,
     });
   };
+
+  if (!hasSellerRole) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <SellerHeader activeTab="dashboard" />
+        <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+          <section className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+            <h1 className="text-xl font-bold text-gray-900">Seller access is not active</h1>
+            <p className="mt-2 text-sm text-gray-600">
+              Product management and marketplace categories become available when your account JWT includes the SELLER role.
+            </p>
+            <Link
+              to="/dashboard/profile"
+              className="mt-5 inline-flex rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+            >
+              View seller application
+            </Link>
+          </section>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">

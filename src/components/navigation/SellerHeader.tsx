@@ -25,7 +25,7 @@ interface SellerHeaderProps {
 }
 
 export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, hasSellerRole } = useAuth();
   const { application, status } = useSellerApplication();
   const location = useLocation();
 
@@ -147,29 +147,33 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
               <span>Overview</span>
             </Link>
 
-            <Link
-              to="/dashboard/products"
-              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                currentTab === 'products'
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              <Package className="h-4 w-4" />
-              <span>Products</span>
-            </Link>
+            {hasSellerRole && (
+              <>
+                <Link
+                  to="/dashboard/products"
+                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                    currentTab === 'products'
+                      ? 'bg-brand-50 text-brand-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <Package className="h-4 w-4" />
+                  <span>Products</span>
+                </Link>
 
-            <Link
-              to="/dashboard/categories"
-              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                currentTab === 'categories'
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              <Layers className="h-4 w-4" />
-              <span>Categories</span>
-            </Link>
+                <Link
+                  to="/dashboard/categories"
+                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                    currentTab === 'categories'
+                      ? 'bg-brand-50 text-brand-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <Layers className="h-4 w-4" />
+                  <span>Categories</span>
+                </Link>
+              </>
+            )}
           </nav>
         </div>
 
@@ -336,28 +340,32 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
               <LayoutDashboard className="h-4 w-4" />
               <span>Overview</span>
             </Link>
-            <Link
-              to="/dashboard/products"
-              className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold ${
-                currentTab === 'products'
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <Package className="h-4 w-4" />
-              <span>Products</span>
-            </Link>
-            <Link
-              to="/dashboard/categories"
-              className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold ${
-                currentTab === 'categories'
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <Layers className="h-4 w-4" />
-              <span>Categories</span>
-            </Link>
+            {hasSellerRole && (
+              <>
+                <Link
+                  to="/dashboard/products"
+                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold ${
+                    currentTab === 'products'
+                      ? 'bg-brand-50 text-brand-700'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <Package className="h-4 w-4" />
+                  <span>Products</span>
+                </Link>
+                <Link
+                  to="/dashboard/categories"
+                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold ${
+                    currentTab === 'categories'
+                      ? 'bg-brand-50 text-brand-700'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <Layers className="h-4 w-4" />
+                  <span>Categories</span>
+                </Link>
+              </>
+            )}
           </div>
 
           <div className="border-t border-gray-100 pt-3 space-y-1">
