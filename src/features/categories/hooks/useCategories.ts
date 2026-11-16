@@ -4,10 +4,11 @@ import { CategoryListParams } from '../../../types/category.types';
 
 export const CATEGORIES_QUERY_KEY = ['categories'];
 
-export function useCategories(params?: CategoryListParams) {
+export function useCategories(params?: CategoryListParams, enabled = true) {
   return useQuery({
     queryKey: [...CATEGORIES_QUERY_KEY, 'list', params],
     queryFn: () => categoryService.listCategories(params),
+    enabled,
     staleTime: 60_000,
   });
 }

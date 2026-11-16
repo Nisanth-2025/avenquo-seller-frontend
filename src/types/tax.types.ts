@@ -28,11 +28,12 @@ export interface SellerTaxResponseDTO {
   id: number | string;
   maskedPan: string;
   panLast4: string;
-  gstin: string;
+  gstin: string | null;
   gstRegistered: boolean;
   rejectionReason?: string | null;
-  cin: string;
+  cin: string | null;
   verificationStatus?: SellerTaxVerificationStatus;
+  submittedAt?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 }

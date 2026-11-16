@@ -30,7 +30,7 @@ export const TaxDetailsCard: React.FC<TaxDetailsCardProps> = ({
 }) => {
   const status = taxDetails.verificationStatus || 'DRAFT';
 
-  const canEdit = status === 'DRAFT' || status === 'REJECTED';
+  const canEdit = status === 'DRAFT';
   const canSubmit = status === 'DRAFT' || status === 'REJECTED';
 
   const renderStatusBadge = () => {
@@ -151,7 +151,7 @@ export const TaxDetailsCard: React.FC<TaxDetailsCardProps> = ({
             </div>
           )}
           <p className="text-red-800">
-            Please click <strong>Edit Details</strong> to adjust the required tax identifiers and resubmit for verification.
+            The current API does not allow edits after rejection. You can resubmit the existing tax details, or contact support if they need correction.
           </p>
         </div>
       )}

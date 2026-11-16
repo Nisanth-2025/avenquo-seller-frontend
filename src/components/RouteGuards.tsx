@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Link, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../features/auth/hooks/useAuth';
 
 /** Shows a full-screen spinner during the token-refresh boot check */
@@ -18,6 +18,31 @@ export const ProtectedRoute: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) return <Spinner />;
   return isAuthenticated ? <Outlet /> : <Navigate to="/auth" replace />;
+};
+
+export const SellerRoleRoute: React.FC = () => {
+  const { hasSellerRole } = useAuth();
+
+  if (!hasSellerRole) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-gray-50 px-6">
+        <section className="max-w-md rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+          <h1 className="text-lg font-semibold text-gray-900">Seller access required</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Products and marketplace categories are available only to accounts with the SELLER role.
+          </p>
+          <Link
+            to="/dashboard/profile"
+            className="mt-5 inline-flex rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+          >
+            View seller application
+          </Link>
+        </section>
+      </main>
+    );
+  }
+
+  return <Outlet />;
 };
 
 export const PublicRoute: React.FC = () => {
