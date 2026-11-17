@@ -212,11 +212,23 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
             </label>
 
             <div
+              role="button"
+              tabIndex={isUploading ? -1 : 0}
+              aria-label="Choose a document file"
+              aria-disabled={isUploading}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
+              onClick={() => {
+                if (!isUploading) fileInputRef.current?.click();
+              }}
+              onKeyDown={(event) => {
+                if (!isUploading && (event.key === 'Enter' || event.key === ' ')) {
+                  event.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
+              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-brand-600 focus:ring-offset-2 ${
                 isDragging
                   ? 'border-brand-500 bg-brand-50/50'
                   : selectedFile
@@ -229,6 +241,7 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                 onChange={handleFileChange}
+                onClick={(event) => event.stopPropagation()}
                 disabled={isUploading}
                 className="hidden"
               />
