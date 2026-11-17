@@ -22,7 +22,7 @@ export class ApiClientError extends Error {
 }
 
 export const apiAxios = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '',
+  baseURL: '',
   headers: { 'Content-Type': 'application/json' },
   timeout: 20000,
 });
@@ -35,9 +35,8 @@ export function rotateRefreshToken(refreshToken: string): Promise<Authentication
 
   activeRefreshPromise = (async () => {
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
       const response = await axios.post<AuthenticationResponseDTO>(
-        `${baseUrl}${API_ENDPOINTS.AUTH.REFRESH}`,
+        API_ENDPOINTS.AUTH.REFRESH,
         { refreshToken: refreshToken.trim() },
         { headers: { 'Content-Type': 'application/json' } },
       );
