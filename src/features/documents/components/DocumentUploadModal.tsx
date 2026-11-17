@@ -90,6 +90,7 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (file) {
       validateAndSetFile(file);
     }
@@ -128,7 +129,16 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
       return;
     }
 
-    await onUpload(selectedFile, selectedType);
+    setFileError(null);
+    try {
+      await onUpload(selectedFile, selectedType);
+    } catch (error) {
+      setFileError(
+        error instanceof Error && error.message
+          ? error.message
+          : 'The document could not be uploaded. Check your connection and try again.'
+      );
+    }
   };
 
   const isTypeAlreadyUploaded = uploadedTypes.has(selectedType);

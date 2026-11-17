@@ -27,7 +27,12 @@ export const DocumentStatutoryChecklist: React.FC<DocumentStatutoryChecklistProp
   onSubmitAll,
 }) => {
   const docMap = new Map<DocumentType, SellerDocumentResponseDTO>();
-  documents.forEach((d) => docMap.set(d.documentType, d));
+  documents.forEach((document) => {
+    // The API returns newest first; preserve the latest record if older duplicates exist.
+    if (!docMap.has(document.documentType)) {
+      docMap.set(document.documentType, document);
+    }
+  });
 
   const standardTypes: DocumentType[] = [
     'PAN',
@@ -35,6 +40,7 @@ export const DocumentStatutoryChecklist: React.FC<DocumentStatutoryChecklistProp
     'ADDRESS_PROOF',
     'BUSINESS_REGISTRATION',
     'CIN_CERTIFICATE',
+    'OTHER',
   ];
 
   // Count required documents uploaded
@@ -170,7 +176,15 @@ export const DocumentStatutoryChecklist: React.FC<DocumentStatutoryChecklistProp
                         : 'text-gray-400'
                     }`}
                   >
-                    {doc ? doc.status : 'Pending'}
+                    {doc
+                    ? doc.status === 'APPROVED'
+                      ? 'Verified'
+                      : doc.status === 'SUBMITTED'
+                      ? 'Submitted'
+                      : doc.status === 'REJECTED'
+                      ? 'Rejected'
+                      : 'Draft'
+                    : 'Unverified'}
                   </span>
                 </div>
               </div>

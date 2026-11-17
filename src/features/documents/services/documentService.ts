@@ -20,7 +20,8 @@ export const documentService = {
 
       const { data } = await apiAxios.post<SellerDocumentResponseDTO>(
         API_ENDPOINTS.SELLERS.DOCUMENTS,
-        formData
+        formData,
+        { timeout: 120_000 }
       );
       return data;
     } catch (err) {

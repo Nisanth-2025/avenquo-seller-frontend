@@ -59,15 +59,9 @@ export const SellerDocumentsPage: React.FC = () => {
   const handleUpload = async (file: File, documentType: DocumentType) => {
     setApiError(null);
     setSuccessNotice(null);
-    try {
-      await uploadMutation.mutateAsync({ file, documentType });
-      setSuccessNotice('Document uploaded successfully as draft.');
-      closeUploadModal();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to upload document.';
-      setApiError(msg);
-      throw err;
-    }
+    await uploadMutation.mutateAsync({ file, documentType });
+    setSuccessNotice('Document uploaded successfully as draft.');
+    closeUploadModal();
   };
 
   const handleDelete = async (id: number) => {
