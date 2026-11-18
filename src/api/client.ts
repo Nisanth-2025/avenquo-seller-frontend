@@ -3,6 +3,8 @@ import { tokenStorage } from '../utils/tokenStorage';
 import { API_ENDPOINTS } from './endpoints';
 import type { AuthenticationResponseDTO } from '../types/auth.types';
 
+const REQUEST_TIMEOUT_MS = 20_000;
+
 export interface ApiErrorBody {
   message?: string;
   status?: boolean;
@@ -24,7 +26,7 @@ export class ApiClientError extends Error {
 export const apiAxios = axios.create({
   baseURL: '',
   headers: { 'Content-Type': 'application/json' },
-  timeout: 20000,
+  timeout: REQUEST_TIMEOUT_MS,
 });
 
 // Mutex / singleton promise to guarantee only one refresh call is in flight
@@ -38,7 +40,10 @@ export function rotateRefreshToken(refreshToken: string): Promise<Authentication
       const response = await axios.post<AuthenticationResponseDTO>(
         API_ENDPOINTS.AUTH.REFRESH,
         { refreshToken: refreshToken.trim() },
-        { headers: { 'Content-Type': 'application/json' } },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: REQUEST_TIMEOUT_MS,
+        },
       );
       const newTokens = response.data;
       if (!newTokens?.accessToken || !newTokens.refreshToken) {
@@ -104,13 +109,9 @@ function isPublicAuthEndpoint(url?: string): boolean {
 // Attach and refresh credentials only for protected endpoints.
 apiAxios.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   if (!isPublicAuthEndpoint(config.url)) {
-    try {
-      const validToken = await getOrRefreshToken();
-      if (validToken && !config.headers.get('Authorization')) {
-        config.headers.set('Authorization', `Bearer ${validToken}`);
-      }
-    } catch {
-      // Let the protected request surface its authentication error after refresh fails.
+    const validToken = await getOrRefreshToken();
+    if (validToken && !config.headers.get('Authorization')) {
+      config.headers.set('Authorization', `Bearer ${validToken}`);
     }
   }
 
