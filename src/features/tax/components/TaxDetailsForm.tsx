@@ -6,7 +6,7 @@ import { Button } from '../../../components/ui/Button';
 import { Alert } from '../../../components/ui/Alert';
 import { SellerTaxRequestDTO, SellerTaxResponseDTO, SellerTaxUpdateRequestDTO } from '../../../types/tax.types';
 import { ApiClientError } from '../../../api/client';
-import { ShieldCheck, Check, CreditCard, Receipt, Building2, Send, Save, AlertTriangle } from 'lucide-react';
+import { Check, CreditCard, Receipt, Building2, Send, Save, AlertTriangle } from 'lucide-react';
 
 const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
@@ -169,7 +169,7 @@ export const TaxDetailsForm: React.FC<TaxDetailsFormProps> = ({
   };
 
   return (
-    <form className="bg-white rounded-xl border border-gray-200 p-6 shadow-card space-y-6" noValidate>
+    <form className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6" noValidate>
       {apiError && (
         <Alert variant="error" message={apiError} onClose={() => setApiError(null)} />
       )}
@@ -191,17 +191,9 @@ export const TaxDetailsForm: React.FC<TaxDetailsFormProps> = ({
 
       {/* Form Header */}
       <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-        <div>
-          <h3 className="text-base font-semibold text-gray-900">
-            {isEditing ? 'Edit Tax Compliance Records' : 'Register Tax Identifiers'}
-          </h3>
-          <p className="text-xs text-gray-500 mt-0.5">
-            All 3 statutory identifiers (PAN, GSTIN, and CIN) are compulsory.
-          </p>
-        </div>
-        <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-md border border-gray-200">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> AEAD Encrypted
-        </span>
+        <h3 className="text-sm font-semibold text-gray-900">
+          {isEditing ? 'Edit tax details' : 'Tax details'}
+        </h3>
       </div>
 
       {/* Field 1: Permanent Account Number (PAN) - Compulsory */}
@@ -212,7 +204,7 @@ export const TaxDetailsForm: React.FC<TaxDetailsFormProps> = ({
           </label>
           {isEditing && initialData?.panLast4 && (
             <span className="text-xs text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono">
-              Saved in DB: {initialData.maskedPan || `XXXXXX${initialData.panLast4}`}
+              On file: {initialData.maskedPan || `XXXXXX${initialData.panLast4}`}
             </span>
           )}
         </div>

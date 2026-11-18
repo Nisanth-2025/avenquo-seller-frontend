@@ -29,14 +29,9 @@ export const ApplicationStepper: React.FC<ApplicationStepperProps> = ({
   else if (status === 'REJECTED') currentStep = 3;
 
   return (
-    <div className="w-full bg-white rounded-xl border border-gray-200 p-5 shadow-card">
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-        <div>
-          <h3 className="text-sm font-semibold text-gray-900">Application Progress</h3>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Track your merchant onboarding and verification milestones
-          </p>
-        </div>
+    <div className="w-full rounded-2xl bg-[#f6f7f9] p-4 sm:p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-900">Application</h3>
         {status === 'CHANGES_REQUIRED' && (
           <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
             <AlertTriangle className="h-3.5 w-3.5 text-amber-600" /> Action Required

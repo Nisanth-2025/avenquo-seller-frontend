@@ -209,16 +209,13 @@ export const SellerApplicationForm: React.FC<SellerApplicationFormProps> = ({
       )}
 
       {/* ── Section 1: Store & Entity Identity ── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card space-y-6">
+      <div className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6">
         <div className="flex items-center gap-2.5 pb-4 border-b border-gray-100">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
             <Store className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-gray-900">Storefront & Entity Identity</h3>
-            <p className="text-xs text-gray-500">
-              Define your brand name, URL handle, and registered business classification.
-            </p>
+            <h3 className="text-sm font-semibold text-gray-900">Storefront</h3>
           </div>
         </div>
 
@@ -295,16 +292,13 @@ export const SellerApplicationForm: React.FC<SellerApplicationFormProps> = ({
       </div>
 
       {/* ── Section 2: Contact & Support Channels ── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card space-y-6">
+      <div className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6">
         <div className="flex items-center gap-2.5 pb-4 border-b border-gray-100">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
             <Building2 className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-gray-900">Support Channels & Web Presence</h3>
-            <p className="text-xs text-gray-500">
-              Customer support channels displayed on your storefront and order receipts.
-            </p>
+            <h3 className="text-sm font-semibold text-gray-900">Support</h3>
           </div>
         </div>
 
@@ -362,16 +356,13 @@ export const SellerApplicationForm: React.FC<SellerApplicationFormProps> = ({
       </div>
 
       {/* ── Section 3: Authorized Representative ── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card space-y-6">
+      <div className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6">
         <div className="flex items-center gap-2.5 pb-4 border-b border-gray-100">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
             <PhoneCall className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-gray-900">Authorized Merchant Representative</h3>
-            <p className="text-xs text-gray-500">
-              Primary business point-of-contact for account compliance and administrative notifications.
-            </p>
+            <h3 className="text-sm font-semibold text-gray-900">Representative</h3>
           </div>
         </div>
 

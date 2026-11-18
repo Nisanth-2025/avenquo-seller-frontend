@@ -116,8 +116,11 @@ apiAxios.interceptors.request.use(async (config: InternalAxiosRequestConfig) => 
   }
 
   // Let browser generate boundary for multipart FormData
-  if (config.data instanceof FormData) {
-    config.headers.delete('Content-Type');
+  if (
+    config.data instanceof FormData ||
+    (config.data && typeof config.data === 'object' && typeof (config.data as FormData).append === 'function')
+  ) {
+    config.headers.set('Content-Type', false);
   }
 
   return config;
@@ -152,10 +155,13 @@ apiAxios.interceptors.response.use(
 /** Normalize both APIException and Bean-validation error responses */
 export function extractApiError(err: unknown): ApiClientError {
   if (err instanceof AxiosError) {
-    const data = err.response?.data as ApiErrorBody | undefined;
+    const data = err.response?.data as ApiErrorBody | string | undefined;
     const status = err.response?.status ?? 0;
 
     if (data) {
+      if (typeof data === 'string') {
+        return new ApiClientError(data.trim() || 'Request failed', status);
+      }
       // Bean validation field map: { email: "...", storeSlug: "..." }
       const hasMessage = typeof data.message === 'string';
       if (!hasMessage) {
