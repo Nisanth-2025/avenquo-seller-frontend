@@ -273,7 +273,7 @@ export const SellerAddressForm: React.FC<SellerAddressFormProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-card overflow-hidden">
+    <div className="overflow-hidden rounded-2xl bg-[#f6f7f9]">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <div className="flex items-center gap-3">
@@ -281,12 +281,9 @@ export const SellerAddressForm: React.FC<SellerAddressFormProps> = ({
             <MapPin className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-gray-900">
-              {isEditing ? 'Update Business Address' : 'Register Principal Business Address'}
+            <h3 className="text-sm font-semibold text-gray-900">
+              {isEditing ? 'Update address' : 'Business address'}
             </h3>
-            <p className="text-xs text-gray-500">
-              Official address used for GST compliance, tax invoicing, and logistics pickup.
-            </p>
           </div>
         </div>
 

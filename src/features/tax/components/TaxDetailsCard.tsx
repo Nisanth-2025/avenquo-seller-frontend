@@ -2,18 +2,7 @@ import React from 'react';
 import { SellerTaxResponseDTO } from '../../../types/tax.types';
 import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
-import {
-  ShieldCheck,
-  Edit3,
-  Send,
-  CheckCircle2,
-  Building,
-  Receipt,
-  CreditCard,
-  Clock,
-  AlertTriangle,
-  Lock,
-} from 'lucide-react';
+import { AlertTriangle, Building, CreditCard, Edit3, Lock, Receipt, Send } from 'lucide-react';
 
 interface TaxDetailsCardProps {
   taxDetails: SellerTaxResponseDTO;
@@ -29,7 +18,6 @@ export const TaxDetailsCard: React.FC<TaxDetailsCardProps> = ({
   isSubmitting,
 }) => {
   const status = taxDetails.verificationStatus || 'DRAFT';
-
   const canEdit = status === 'DRAFT';
   const canSubmit = status === 'DRAFT' || status === 'REJECTED';
 
@@ -38,7 +26,7 @@ export const TaxDetailsCard: React.FC<TaxDetailsCardProps> = ({
       case 'DRAFT':
         return (
           <Badge variant="gray" size="sm" dot>
-            Draft Saved
+            Draft
           </Badge>
         );
       case 'SUBMITTED':
@@ -50,7 +38,7 @@ export const TaxDetailsCard: React.FC<TaxDetailsCardProps> = ({
       case 'UNDER_REVIEW':
         return (
           <Badge variant="amber" size="sm" dot>
-            Under Review
+            Under review
           </Badge>
         );
       case 'APPROVED':
@@ -75,142 +63,72 @@ export const TaxDetailsCard: React.FC<TaxDetailsCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-card">
-      {/* Top Header */}
-      <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50/50">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-            <Receipt className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-gray-900">Tax Identification Summary</h3>
-              {renderStatusBadge()}
-            </div>
-            <p className="text-xs text-gray-500">Record #{taxDetails.id} · Encrypted at rest</p>
-          </div>
-        </div>
-
-        {/* Buttons strictly adjusted based on verificationStatus */}
-        <div className="flex items-center gap-2">
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">{renderStatusBadge()}</div>
+        <div className="flex flex-wrap items-center gap-2">
           {canEdit && (
             <Button size="sm" variant="secondary" onClick={onEdit}>
-              <Edit3 className="h-3.5 w-3.5" /> Edit Details
+              <Edit3 className="h-3.5 w-3.5" /> Edit
             </Button>
           )}
-
           {canSubmit && (
             <Button size="sm" variant="primary" loading={isSubmitting} onClick={onSubmit}>
               <Send className="h-3.5 w-3.5" />
-              {status === 'REJECTED' ? 'Resubmit for Verification' : 'Submit for Verification'}
+              {status === 'REJECTED' ? 'Resubmit' : 'Submit'}
             </Button>
           )}
-
           {!canEdit && !canSubmit && (
-            <div className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg">
-              <Lock className="h-3.5 w-3.5 text-gray-400" />
-              <span>
-                {status === 'APPROVED' ? 'Verified (Locked)' : 'Under Review (Locked)'}
-              </span>
-            </div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-500">
+              <Lock className="h-3.5 w-3.5" />
+              {status === 'APPROVED' ? 'Verified' : 'Locked'}
+            </span>
           )}
         </div>
       </div>
 
-      {/* Context Banner based on status */}
-      {status === 'SUBMITTED' && (
-        <div className="px-6 py-2.5 bg-blue-50/80 border-b border-blue-100 flex items-center gap-2 text-xs text-blue-900">
-          <Clock className="h-4 w-4 text-blue-600 flex-shrink-0" />
-          <span>Tax identifiers submitted for compliance verification. Modification is temporarily locked.</span>
+      {status === 'REJECTED' && taxDetails.rejectionReason && (
+        <div className="flex items-start gap-2.5 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-900">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+          <p>{taxDetails.rejectionReason}</p>
         </div>
       )}
 
-      {status === 'UNDER_REVIEW' && (
-        <div className="px-6 py-2.5 bg-amber-50/80 border-b border-amber-100 flex items-center gap-2 text-xs text-amber-900">
-          <Clock className="h-4 w-4 text-amber-600 flex-shrink-0" />
-          <span>Our compliance team is currently reviewing your statutory tax documents.</span>
-        </div>
-      )}
-
-      {status === 'APPROVED' && (
-        <div className="px-6 py-2.5 bg-emerald-50/80 border-b border-emerald-100 flex items-center gap-2 text-xs text-emerald-900">
-          <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-          <span>Tax details are verified and active for merchant payouts and invoicing.</span>
-        </div>
-      )}
-
-      {status === 'REJECTED' && (
-        <div className="px-6 py-3.5 bg-red-50/90 border-b border-red-200 text-xs text-red-950 space-y-2">
-          <div className="flex items-center gap-2 font-semibold text-red-900">
-            <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
-            <span>Tax Compliance Review: Submission Rejected</span>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="rounded-2xl bg-[#f6f7f9] p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+            <CreditCard className="h-4 w-4" />
           </div>
-          {taxDetails.rejectionReason && (
-            <div className="rounded-lg border border-red-200 bg-white/90 p-3 font-mono text-red-900 text-xs leading-relaxed shadow-xs">
-              "{taxDetails.rejectionReason}"
-            </div>
-          )}
-          <p className="text-red-800">
-            The current API does not allow edits after rejection. You can resubmit the existing tax details, or contact support if they need correction.
-          </p>
-        </div>
-      )}
-
-      {/* Grid of 3 compulsory Tax Identifiers */}
-      <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* PAN Card */}
-        <div className="rounded-lg border border-gray-100 bg-gray-50/40 p-4 space-y-2">
-          <div className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
-            <CreditCard className="h-3.5 w-3.5 text-gray-400" /> Permanent Account Number (PAN)
-          </div>
-          <div className="text-lg font-bold font-mono text-gray-900 tracking-wider">
+          <p className="mt-4 text-xs font-medium text-gray-500">PAN</p>
+          <p className="mt-1 font-mono text-base font-semibold tracking-wide text-gray-900">
             {taxDetails.maskedPan || `XXXXXX${taxDetails.panLast4}`}
-          </div>
-          <p className="text-[11px] text-gray-400 flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3 text-emerald-600" /> Verified ending in {taxDetails.panLast4}
           </p>
         </div>
 
-        {/* GSTIN Card */}
-        <div className="rounded-lg border border-gray-100 bg-gray-50/40 p-4 space-y-2">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span className="font-medium flex items-center gap-1.5">
-              <Receipt className="h-3.5 w-3.5 text-gray-400" /> GST Identification (GSTIN)
-            </span>
+        <div className="rounded-2xl bg-[#f6f7f9] p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+              <Receipt className="h-4 w-4" />
+            </div>
             <Badge variant={taxDetails.gstRegistered ? 'green' : 'gray'} size="sm">
-              {taxDetails.gstRegistered ? 'Registered' : 'Not Registered'}
+              {taxDetails.gstRegistered ? 'Registered' : 'Not registered'}
             </Badge>
           </div>
-          <div className="text-base font-bold font-mono text-gray-900 tracking-wide truncate">
+          <p className="mt-4 text-xs font-medium text-gray-500">GSTIN</p>
+          <p className="mt-1 truncate font-mono text-sm font-semibold tracking-wide text-gray-900">
             {taxDetails.gstin}
-          </div>
-          <p className="text-[11px] text-gray-400">
-            {taxDetails.gstRegistered ? 'Registered taxpayer' : 'Unregistered / Exempt status'}
           </p>
         </div>
 
-        {/* CIN Card */}
-        <div className="rounded-lg border border-gray-100 bg-gray-50/40 p-4 space-y-2">
-          <div className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
-            <Building className="h-3.5 w-3.5 text-gray-400" /> Corporate Identity (CIN)
+        <div className="rounded-2xl bg-[#f6f7f9] p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+            <Building className="h-4 w-4" />
           </div>
-          <div className="text-sm font-bold font-mono text-gray-900 tracking-wide truncate">
+          <p className="mt-4 text-xs font-medium text-gray-500">CIN</p>
+          <p className="mt-1 truncate font-mono text-sm font-semibold tracking-wide text-gray-900">
             {taxDetails.cin}
-          </div>
-          <p className="text-[11px] text-gray-400">
-            MCA 21-character Corporate Registration
           </p>
         </div>
-      </div>
-
-      {/* Security Footer */}
-      <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/20 flex items-center justify-between text-xs text-gray-400">
-        <span className="flex items-center gap-1.5">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> AEAD Encrypted Data Protection
-        </span>
-        {taxDetails.updatedAt && (
-          <span>Last modified: {new Date(taxDetails.updatedAt).toLocaleDateString()}</span>
-        )}
       </div>
     </div>
   );

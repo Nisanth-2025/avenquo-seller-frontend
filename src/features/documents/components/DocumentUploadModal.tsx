@@ -117,6 +117,8 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isUploading) return;
+
     if (!selectedFile) {
       setFileError('Please select a document file to upload.');
       return;
@@ -145,14 +147,11 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-xs">
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_rgba(15,23,42,0.16)]">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-semibold text-gray-900">Upload Compliance Document</h3>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Upload statutory verification document as draft.
-            </p>
+            <h3 className="text-base font-semibold text-gray-900">Upload document</h3>
           </div>
           <button
             type="button"

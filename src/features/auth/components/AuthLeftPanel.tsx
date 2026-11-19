@@ -1,59 +1,78 @@
 import React from 'react';
+import { Store, ShieldCheck, Zap, TrendingUp } from 'lucide-react';
 
 export const AuthLeftPanel: React.FC = () => (
-  <div className="auth-left relative hidden lg:flex lg:flex-col h-full">
+  <div className="auth-left relative hidden lg:flex lg:flex-col h-full bg-[#0f172a] select-none">
     {/* subtle grid pattern */}
     <div className="auth-left-bg" />
 
-    {/* top-left logo */}
+    {/* Top brand logo */}
     <div className="relative z-10 p-10">
-      <div className="flex items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/20">
-          {/* Simple store icon */}
-          <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15 text-white shadow-sm">
+          <Store className="h-5 w-5" />
         </div>
-        <span className="text-lg font-semibold tracking-tight text-white">Avenquo</span>
+        <div>
+          <span className="text-xl font-bold tracking-tight text-white block leading-tight">
+            Avenquo
+          </span>
+          <span className="text-xs font-medium text-white/50 block">Seller Portal</span>
+        </div>
       </div>
     </div>
 
-    {/* center content */}
+    {/* Center content hero */}
     <div className="relative z-10 flex flex-1 flex-col justify-center px-10 pb-16">
-      {/* pill */}
-      <span className="mb-6 inline-flex w-fit items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-white/80">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-        Seller Portal · Secure Access
+      {/* Pill badge */}
+      <span className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1 text-xs font-medium text-white/85 backdrop-blur-xs">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        Merchant Gateway · Secure Access
       </span>
 
-      <h1 className="text-4xl font-bold leading-tight tracking-tight text-white">
-        Your commerce,<br/>
-        <span className="text-white/70">elevated.</span>
+      <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white">
+        Your commerce,
+        <br />
+        <span className="text-white/60">elevated.</span>
       </h1>
-      <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
-        Manage your products, orders and analytics in one unified platform built for modern merchants.
+      <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/60">
+        Manage inventory, fulfill orders, monitor real-time statutory compliance, and scale your sales
+        across the unified Avenquo marketplace.
       </p>
 
-      {/* stats row */}
-      <div className="mt-12 flex gap-8">
+      {/* Feature bullets / highlights */}
+      <div className="mt-8 space-y-3 max-w-sm">
+        <div className="flex items-center gap-2.5 text-xs text-white/75">
+          <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+          <span>Automated GST, PAN & statutory compliance</span>
+        </div>
+        <div className="flex items-center gap-2.5 text-xs text-white/75">
+          <Zap className="h-4 w-4 text-amber-400 shrink-0" />
+          <span>Real-time inventory sync & quick product listings</span>
+        </div>
+        <div className="flex items-center gap-2.5 text-xs text-white/75">
+          <TrendingUp className="h-4 w-4 text-blue-400 shrink-0" />
+          <span>Direct payouts with bank-grade security</span>
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="mt-10 flex gap-8 border-t border-white/10 pt-8">
         {[
           { value: '50K+', label: 'Active sellers' },
           { value: '99.9%', label: 'Uptime SLA' },
-          { value: '2M+', label: 'Orders/month' },
-        ].map(s => (
+          { value: '2M+', label: 'Orders / mo' },
+        ].map((s) => (
           <div key={s.label}>
-            <div className="text-xl font-bold text-white">{s.value}</div>
-            <div className="mt-0.5 text-xs text-white/45">{s.label}</div>
+            <div className="text-xl font-black text-white tracking-tight">{s.value}</div>
+            <div className="mt-0.5 text-xs text-white/50">{s.label}</div>
           </div>
         ))}
       </div>
     </div>
 
-    {/* bottom bar */}
+    {/* Bottom copyright */}
     <div className="relative z-10 border-t border-white/10 px-10 py-5">
-      <p className="text-xs text-white/35">© 2026 Avenquo Marketplace · All rights reserved</p>
+      <p className="text-xs text-white/40">© 2026 Avenquo Marketplace · All rights reserved</p>
     </div>
   </div>
 );

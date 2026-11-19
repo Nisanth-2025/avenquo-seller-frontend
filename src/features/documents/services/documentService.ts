@@ -1,4 +1,5 @@
-import { apiAxios, extractApiError } from '../../../api/client';
+import { apiAxios, extractApiError, getOrRefreshToken, rotateRefreshToken, ApiClientError } from '../../../api/client';
+import { tokenStorage } from '../../../utils/tokenStorage';
 import { API_ENDPOINTS } from '../../../api/endpoints';
 import type {
   DocumentType,
@@ -14,17 +15,71 @@ export const documentService = {
    */
   async uploadDocument(file: File, documentType: DocumentType): Promise<SellerDocumentResponseDTO> {
     try {
+      let token = await getOrRefreshToken();
+
       const formData = new FormData();
       formData.append('document', file);
       formData.append('documentType', documentType);
 
-      const { data } = await apiAxios.post<SellerDocumentResponseDTO>(
-        API_ENDPOINTS.SELLERS.DOCUMENTS,
-        formData,
-        { timeout: 120_000 }
-      );
+      const baseUrl = apiAxios.defaults.baseURL || '';
+      const url = `${baseUrl}${API_ENDPOINTS.SELLERS.DOCUMENTS}`;
+
+      let response = await fetch(url, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      // Handle 401 token refresh retry if clock drift occurred
+      if (response.status === 401) {
+        const refreshToken = tokenStorage.getRefreshToken();
+        if (refreshToken) {
+          const newTokens = await rotateRefreshToken(refreshToken);
+          if (newTokens?.accessToken) {
+            token = newTokens.accessToken;
+            response = await fetch(url, {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${token}` },
+              body: formData,
+            });
+          }
+        }
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        let errorMessage = 'The document could not be uploaded. Check your connection and try again.';
+        let fieldErrors: Record<string, string> | undefined = undefined;
+
+        if (errorData) {
+          if (typeof errorData.message === 'string') {
+            errorMessage = errorData.message;
+          } else if (typeof errorData === 'string') {
+            errorMessage = errorData;
+          } else if (typeof errorData === 'object') {
+            const errs: Record<string, string> = {};
+            let first = '';
+            for (const [k, v] of Object.entries(errorData)) {
+              if (typeof v === 'string') {
+                errs[k] = v;
+                if (!first) first = v;
+              }
+            }
+            if (first) {
+              errorMessage = first;
+              fieldErrors = errs;
+            }
+          }
+        }
+        throw new ApiClientError(errorMessage, response.status, fieldErrors);
+      }
+
+      const data: SellerDocumentResponseDTO = await response.json();
       return data;
     } catch (err) {
+      if (err instanceof ApiClientError) {
+        throw err;
+      }
       throw extractApiError(err);
     }
   },

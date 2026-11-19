@@ -51,21 +51,13 @@ export const DocumentStatutoryChecklist: React.FC<DocumentStatutoryChecklistProp
   const draftCount = documents.filter((d) => d.status === 'DRAFT').length;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-card space-y-6">
-      {/* Top Banner Row */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-              <FileCheck className="h-5 w-5" />
-            </span>
-            <h3 className="text-base font-semibold text-gray-900">
-              Statutory KYC & Compliance Documents
-            </h3>
-          </div>
-          <p className="mt-1 text-xs text-gray-500 max-w-2xl leading-relaxed">
-            Upload standard business verification records for merchant approval. Maximum file size is 5MB (PDF, JPEG, or PNG).
-          </p>
+    <div className="space-y-4 rounded-2xl bg-[#f6f7f9] p-4 sm:p-5">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+            <FileCheck className="h-4 w-4" />
+          </span>
+          <h3 className="text-sm font-semibold text-gray-900">Required documents</h3>
         </div>
 
         {/* Action Buttons */}
@@ -98,15 +90,12 @@ export const DocumentStatutoryChecklist: React.FC<DocumentStatutoryChecklistProp
       </div>
 
       {/* Progress Bar & Required Checklist */}
-      <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-100 space-y-3">
-        <div className="flex items-center justify-between text-xs font-medium text-gray-700">
-          <span className="flex items-center gap-1.5">
-            <span className="font-semibold text-gray-900">Mandatory KYC Verification:</span>
-            <span>
-              {requiredUploadedCount} of {requiredTypes.length} required documents uploaded
-            </span>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-xs font-medium text-gray-600">
+          <span>
+            {requiredUploadedCount} of {requiredTypes.length} required
           </span>
-          <span className="text-brand-600 font-bold">{progressPercent}% Completed</span>
+          <span className="font-semibold text-brand-600">{progressPercent}%</span>
         </div>
 
         <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">

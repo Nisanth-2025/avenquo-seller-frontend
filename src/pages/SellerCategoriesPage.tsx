@@ -49,28 +49,28 @@ export const SellerCategoriesPage: React.FC = () => {
   const currentPage = data?.pageNumber ?? 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="flex min-h-screen flex-col bg-[#f3f4f8]">
       <SellerHeader activeTab="categories" />
 
       {/* Main Container */}
-      <main className="flex-1 mx-auto max-w-7xl w-full px-4 py-8 sm:px-6 space-y-6">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8 space-y-6">
         {/* Page Title & Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-[22px] font-semibold tracking-tight text-gray-900">
                 Marketplace Categories
               </h1>
-              <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700 ring-1 ring-brand-200">
+              <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700 border border-brand-200">
                 Public Catalog
               </span>
             </div>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-0.5 text-xs text-gray-500">
               Browse approved marketplace categories to classify your seller products and optimize discoverability.
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <Button
               variant="secondary"
               size="sm"
@@ -78,18 +78,18 @@ export const SellerCategoriesPage: React.FC = () => {
               loading={isFetching}
               title="Refresh category list"
             >
-              <RefreshCw className="h-4 w-4" /> Refresh
+              <RefreshCw className="h-3.5 w-3.5" /> Refresh
             </Button>
             <Link to="/dashboard/products?new=1">
               <Button size="sm">
-                <PlusCircle className="h-4 w-4" /> Add Product
+                <PlusCircle className="h-3.5 w-3.5" /> Add Product
               </Button>
             </Link>
           </div>
         </div>
 
         {/* Filters & Controls Bar */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm space-y-4">
+        <div className="rounded-2xl bg-white p-4 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
@@ -99,7 +99,7 @@ export const SellerCategoriesPage: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search categories by name or ID…"
-                className="w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                className="w-full rounded-xl border border-gray-300 bg-white pl-10 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 shadow-input focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600"
               />
             </div>
 
@@ -117,7 +117,7 @@ export const SellerCategoriesPage: React.FC = () => {
                     ];
                     setParams((prev) => ({ ...prev, sortBy, sortOrder, pageNumber: 0 }));
                   }}
-                  className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 focus:border-brand-500 focus:outline-none"
+                  className="rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 focus:border-brand-600 focus:outline-none shadow-xs"
                 >
                   <option value="categoryName-asc">Name (A to Z)</option>
                   <option value="categoryName-desc">Name (Z to A)</option>
@@ -138,7 +138,7 @@ export const SellerCategoriesPage: React.FC = () => {
                       pageNumber: 0,
                     }))
                   }
-                  className="rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-xs font-medium text-gray-700 focus:border-brand-500 focus:outline-none"
+                  className="rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-xs font-medium text-gray-700 focus:border-brand-600 focus:outline-none shadow-xs"
                 >
                   <option value="12">12</option>
                   <option value="20">20</option>
@@ -148,13 +148,13 @@ export const SellerCategoriesPage: React.FC = () => {
               </div>
 
               {/* View Switcher */}
-              <div className="flex items-center rounded-lg border border-gray-200 p-0.5 bg-gray-50">
+              <div className="flex items-center rounded-xl border border-gray-100 p-0.5 bg-[#f6f7f9]">
                 <button
                   type="button"
                   onClick={() => setViewMode('grid')}
-                  className={`p-1.5 rounded-md transition-colors ${
+                  className={`p-1.5 rounded-lg transition-colors ${
                     viewMode === 'grid'
-                      ? 'bg-white text-brand-600 shadow-xs'
+                      ? 'bg-white text-gray-900 shadow-xs'
                       : 'text-gray-400 hover:text-gray-700'
                   }`}
                   title="Grid view"
@@ -164,9 +164,9 @@ export const SellerCategoriesPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setViewMode('table')}
-                  className={`p-1.5 rounded-md transition-colors ${
+                  className={`p-1.5 rounded-lg transition-colors ${
                     viewMode === 'table'
-                      ? 'bg-white text-brand-600 shadow-xs'
+                      ? 'bg-white text-gray-900 shadow-xs'
                       : 'text-gray-400 hover:text-gray-700'
                   }`}
                   title="Table view"
@@ -180,15 +180,15 @@ export const SellerCategoriesPage: React.FC = () => {
 
         {/* Content Section */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="h-64 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm animate-pulse space-y-3"
+                className="h-64 rounded-2xl bg-white border border-gray-100 p-4 animate-pulse space-y-3"
               >
-                <div className="h-36 rounded-xl bg-gray-200" />
-                <div className="h-4 w-3/4 rounded bg-gray-200" />
-                <div className="h-3 w-1/2 rounded bg-gray-100" />
+                <div className="h-36 rounded-xl bg-gray-100" />
+                <div className="h-4 w-3/4 rounded bg-gray-100" />
+                <div className="h-3 w-1/2 rounded bg-gray-50" />
               </div>
             ))}
           </div>
@@ -205,12 +205,12 @@ export const SellerCategoriesPage: React.FC = () => {
             </Button>
           </div>
         ) : displayedCategories.length === 0 ? (
-          <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center space-y-4 shadow-sm">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 mx-auto">
+          <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center space-y-4 shadow-[0_4px_20px_rgba(15,23,42,0.04)]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f6f7f9] text-gray-500 mx-auto shadow-xs">
               <Layers className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-gray-900">No categories found</h3>
+              <h3 className="text-base font-semibold text-gray-900">No categories found</h3>
               <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
                 {searchTerm
                   ? `No active categories match "${searchTerm}". Try a different search term.`
@@ -225,15 +225,15 @@ export const SellerCategoriesPage: React.FC = () => {
           </div>
         ) : viewMode === 'grid' ? (
           /* Grid View */
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {displayedCategories.map((category) => (
               <div
                 key={category.categoryId}
-                className="group flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all duration-200"
+                className="group flex flex-col justify-between rounded-2xl bg-white p-3.5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-200"
               >
                 <div className="space-y-3">
                   {/* Category Image */}
-                  <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-gray-100 border border-gray-100 flex items-center justify-center group-hover:opacity-95 transition-opacity">
+                  <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-[#f6f7f9] border border-gray-100 flex items-center justify-center group-hover:opacity-95 transition-opacity">
                     {category.categoryImageUrl ? (
                       <img
                         src={category.categoryImageUrl}
@@ -259,32 +259,37 @@ export const SellerCategoriesPage: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Title & Info */}
+                  {/* Category Info */}
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900 group-hover:text-brand-600 transition-colors truncate">
+                    <h3
+                      onClick={() => setSelectedCategory(category)}
+                      className="font-semibold text-gray-900 text-sm hover:text-brand-600 cursor-pointer truncate"
+                      title={category.categoryName}
+                    >
                       {category.categoryName}
                     </h3>
-                    <p className="text-[11px] text-gray-400 mt-0.5">
+                    <p className="text-[11px] text-gray-400 font-mono mt-0.5">
                       Updated {new Date(category.updatedAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
-                  <button
-                    type="button"
+                <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <Button
+                    size="sm"
+                    variant="secondary"
                     onClick={() => setSelectedCategory(category)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-brand-600 transition-colors"
+                    className="flex-1 text-xs"
                   >
                     <Eye className="h-3.5 w-3.5" /> Details
-                  </button>
-
+                  </Button>
                   <Link
                     to={`/dashboard/products?new=1&categoryId=${category.categoryId}`}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-2.5 py-1 rounded-lg transition-colors"
+                    className="flex-1"
                   >
-                    <PlusCircle className="h-3.5 w-3.5" /> Add Product
+                    <Button size="sm" variant="primary" className="w-full text-xs">
+                      <PlusCircle className="h-3.5 w-3.5" /> Product
+                    </Button>
                   </Link>
                 </div>
               </div>
@@ -292,10 +297,10 @@ export const SellerCategoriesPage: React.FC = () => {
           </div>
         ) : (
           /* Table View */
-          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.04)]">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-semibold uppercase tracking-wider">
+                <thead className="bg-gray-50/50 border-b border-gray-100 text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
                   <tr>
                     <th className="px-4 py-3">Category</th>
                     <th className="px-4 py-3">System ID</th>
@@ -313,7 +318,7 @@ export const SellerCategoriesPage: React.FC = () => {
                     >
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+                          <div className="h-10 w-10 flex-shrink-0 rounded-xl overflow-hidden bg-[#f6f7f9] border border-gray-100 flex items-center justify-center">
                             {category.categoryImageUrl ? (
                               <img
                                 src={category.categoryImageUrl}
@@ -381,7 +386,7 @@ export const SellerCategoriesPage: React.FC = () => {
 
         {/* Pagination Bar */}
         {data && data.totalElements > 0 && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2 border-t border-gray-100">
             <p className="text-xs text-gray-500">
               Showing page <span className="font-semibold text-gray-900">{currentPage + 1}</span> of{' '}
               <span className="font-semibold text-gray-900">{totalPages || 1}</span> (Total{' '}

@@ -140,7 +140,7 @@ export const ApprovedStorefrontProfileView: React.FC<ApprovedStorefrontProfileVi
       )}
 
       {/* ── Public Storefront Live Preview Card ── */}
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-card">
+      <div className="overflow-hidden rounded-2xl bg-[#f6f7f9]">
         {/* Banner Area */}
         <div className="relative h-44 sm:h-56 w-full bg-gradient-to-r from-slate-900 via-slate-800 to-blue-950 overflow-hidden">
           {application.bannerUrl ? (
@@ -273,13 +273,8 @@ export const ApprovedStorefrontProfileView: React.FC<ApprovedStorefrontProfileVi
       </div>
 
       {/* ── Brand Asset Management (Logo & Banner) ── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card space-y-6">
-        <div>
-          <h3 className="text-base font-semibold text-gray-900">Brand Imagery</h3>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Upload high-resolution merchant assets. These appear on your public store, category pages, and search cards.
-          </p>
-        </div>
+      <div className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6">
+        <h3 className="text-sm font-semibold text-gray-900">Logo and banner</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Logo Dropzone */}
@@ -308,18 +303,8 @@ export const ApprovedStorefrontProfileView: React.FC<ApprovedStorefrontProfileVi
 
       {/* ── Storefront Profile Patch Editor (Shown when Editing) ── */}
       {isEditing && (
-        <form onSubmit={handlePatchSubmit} className="bg-white rounded-xl border border-brand-200 p-6 shadow-card space-y-6 ring-2 ring-brand-50" noValidate>
-          <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900">Update Public Storefront Details</h3>
-              <p className="text-xs text-gray-500 mt-0.5">
-                Update customer support contacts, store summary, and official web link.
-              </p>
-            </div>
-            <span className="text-xs font-mono font-medium text-brand-600 bg-brand-50 px-2 py-0.5 rounded">
-              PATCH /api/v1/sellers/profile
-            </span>
-          </div>
+        <form onSubmit={handlePatchSubmit} className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6" noValidate>
+          <h3 className="text-sm font-semibold text-gray-900">Storefront details</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Input

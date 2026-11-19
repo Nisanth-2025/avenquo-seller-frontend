@@ -192,7 +192,7 @@ export const BankDetailsForm: React.FC<BankDetailsFormProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-card overflow-hidden">
+    <div className="overflow-hidden rounded-2xl bg-[#f6f7f9]">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <div className="flex items-center gap-3">
@@ -200,12 +200,9 @@ export const BankDetailsForm: React.FC<BankDetailsFormProps> = ({
             <Landmark className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-gray-900">
-              {isEditing ? 'Update Bank Account Details' : 'Register Payout Bank Account'}
+            <h3 className="text-sm font-semibold text-gray-900">
+              {isEditing ? 'Update payout account' : 'Payout account'}
             </h3>
-            <p className="text-xs text-gray-500">
-              Direct settlement destination for order payouts and marketplace remittances.
-            </p>
           </div>
         </div>
 
@@ -242,7 +239,7 @@ export const BankDetailsForm: React.FC<BankDetailsFormProps> = ({
                 Currently Registered Account: {initialData?.maskedAccountNumber} ({initialData?.bankName})
               </p>
               <p className="mt-0.5 text-blue-800 leading-relaxed">
-                For security, bank account numbers are encrypted at rest with AEAD 256-bit encryption. Please re-enter and confirm your account number to update your payout records.
+                Re-enter the account number to update this payout account.
               </p>
             </div>
           </div>
@@ -407,14 +404,6 @@ export const BankDetailsForm: React.FC<BankDetailsFormProps> = ({
               Re-type account number to prevent disbursement routing failures.
             </p>
           </div>
-        </div>
-
-        {/* Security Assurance Box */}
-        <div className="rounded-xl bg-gray-50 border border-gray-200 p-4 flex items-start gap-3 text-xs text-gray-600">
-          <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-          <p className="leading-relaxed">
-            <span className="font-semibold text-gray-900">Encrypted Payout Record:</span> Raw account numbers are encrypted at rest with AEAD 256-bit keys and never returned unmasked in API responses or logs.
-          </p>
         </div>
 
         {/* Form Action Buttons */}
