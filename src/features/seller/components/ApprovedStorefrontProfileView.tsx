@@ -84,6 +84,7 @@ export const ApprovedStorefrontProfileView: React.FC<ApprovedStorefrontProfileVi
     handleSubmit,
     setValue,
     watch,
+    reset,
     setError,
     formState: { errors },
   } = useForm<PatchFormData>({
@@ -106,8 +107,8 @@ export const ApprovedStorefrontProfileView: React.FC<ApprovedStorefrontProfileVi
     try {
       const payload: PatchSellerProfileDTO = {};
       if (data.description !== undefined) payload.description = data.description;
-      if (data.supportEmail !== undefined && data.supportEmail !== '') payload.supportEmail = data.supportEmail;
-      if (data.supportPhone !== undefined && data.supportPhone !== '') payload.supportPhone = data.supportPhone;
+      if (data.supportEmail !== undefined) payload.supportEmail = data.supportEmail;
+      if (data.supportPhone !== undefined) payload.supportPhone = data.supportPhone;
       if (data.website !== undefined) payload.website = data.website;
 
       await onPatchProfile(payload);
@@ -212,6 +213,14 @@ export const ApprovedStorefrontProfileView: React.FC<ApprovedStorefrontProfileVi
                 size="sm"
                 variant={isEditing ? 'secondary' : 'primary'}
                 onClick={() => {
+                  if (!isEditing) {
+                    reset({
+                      description: application.description || '',
+                      supportEmail: application.supportEmail || '',
+                      supportPhone: application.supportPhone || '',
+                      website: application.website || '',
+                    });
+                  }
                   setIsEditing(!isEditing);
                   setApiError(null);
                   setSuccessMessage(null);

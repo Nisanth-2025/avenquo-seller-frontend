@@ -84,7 +84,10 @@ export const sellerService = {
 
       const { data } = await apiAxios.patch<SellerProfileResponseDTO>(
         API_ENDPOINTS.SELLERS.PROFILE,
-        formData
+        formData,
+        {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        }
       );
       return data;
     } catch (err) {

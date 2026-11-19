@@ -33,16 +33,22 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
+  // Close the account popover on outside interaction or Escape.
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handlePointerDown(event: PointerEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setIsDropdownOpen(false);
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -185,7 +191,9 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
               type="button"
               onClick={() => setIsDropdownOpen((prev) => !prev)}
               aria-expanded={isDropdownOpen}
-              className={`flex items-center gap-2.5 rounded-xl border p-1.5 pr-2.5 text-left transition-all ${
+              aria-haspopup="true"
+              aria-controls="seller-account-menu"
+              className={`flex items-center gap-2.5 rounded-xl border p-1.5 pr-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
                 isDropdownOpen
                   ? 'border-brand-500 ring-2 ring-brand-100 bg-brand-50/50'
                   : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 shadow-sm'
@@ -220,7 +228,10 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-88 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl ring-1 ring-black/5 animate-slide-up z-50">
+              <div
+                id="seller-account-menu"
+                className="absolute right-0 mt-2 w-[min(22rem,calc(100vw-2rem))] max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl border border-gray-200 bg-white p-2 shadow-xl shadow-gray-900/10 ring-1 ring-black/5 animate-slide-up z-50"
+              >
                 {/* User / Merchant Summary */}
                 <div className="rounded-xl bg-gradient-to-br from-gray-50 to-brand-50/30 p-3 mb-2 border border-gray-100">
                   <div className="flex items-center justify-between gap-2">

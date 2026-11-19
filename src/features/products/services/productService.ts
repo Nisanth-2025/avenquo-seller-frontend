@@ -48,7 +48,7 @@ export const productService = {
   /**
    * Create product with 1-5 images.
    * POST /api/v1/seller/products
-   * Uses multipart/form-data with JSON part 'product' and file parts 'images'
+   * Uses multipart/form-data model fields plus file parts named 'images'
    */
   async createProduct(
     product: ProductCreateRequestDTO,
@@ -56,12 +56,25 @@ export const productService = {
   ): Promise<ProductResponseDTO> {
     try {
       const formData = new FormData();
-      const productBlob = new Blob([JSON.stringify(product)], { type: 'application/json' });
-      formData.append('product', productBlob);
+      formData.append('categoryId', String(product.categoryId));
+      formData.append('productName', product.productName);
+      formData.append('sku', product.sku);
+      formData.append('price', String(product.price));
+      formData.append('discount', String(product.discount ?? 0));
+      formData.append('quantity', String(product.quantity));
+      formData.append('isReturnable', String(product.isReturnable));
 
-      images.forEach((file) => {
-        formData.append('images', file);
-      });
+      if (product.shortDescription !== undefined) {
+        formData.append('shortDescription', product.shortDescription);
+      }
+      if (product.description !== undefined) {
+        formData.append('description', product.description);
+      }
+      if (product.returnWindowDays !== undefined) {
+        formData.append('returnWindowDays', String(product.returnWindowDays));
+      }
+
+      images.forEach((file) => formData.append('images', file));
 
       const response = await apiAxios.post<ProductResponseDTO>(
         API_ENDPOINTS.PRODUCTS.BASE,
