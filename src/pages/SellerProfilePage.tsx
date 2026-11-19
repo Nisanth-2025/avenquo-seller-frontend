@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSellerApplication } from '../features/seller/hooks/useSellerApplication';
 import { ApplicationStepper } from '../features/seller/components/ApplicationStepper';
 import { ApplicationStatusBanner } from '../features/seller/components/ApplicationStatusBanner';
 import { ApplicationStatusBadge } from '../features/seller/components/ApplicationStatusBadge';
 import { SellerApplicationForm } from '../features/seller/components/SellerApplicationForm';
+import { StorefrontDetailsCard } from '../features/seller/components/StorefrontDetailsCard';
 import { ApprovedStorefrontProfileView } from '../features/seller/components/ApprovedStorefrontProfileView';
 import { AccountWorkspace } from '../features/account/components/AccountWorkspace';
 import { Button } from '../components/ui/Button';
+import { Alert } from '../components/ui/Alert';
 import { CreateSellerApplicationDTO, PatchSellerProfileDTO } from '../types/seller.types';
-import { RefreshCw, Store } from 'lucide-react';
+import { Edit3, RefreshCw, Store } from 'lucide-react';
 import { SellerHeader } from '../components/navigation/SellerHeader';
 
 export const SellerProfilePage: React.FC = () => {
@@ -33,41 +35,73 @@ export const SellerProfilePage: React.FC = () => {
     isApproved,
   } = useSellerApplication();
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [successNotice, setSuccessNotice] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
+
   const handleSaveDraft = async (data: CreateSellerApplicationDTO) => {
-    if (!hasApplication) {
-      await createMutation.mutateAsync(data);
-    } else {
-      await updateMutation.mutateAsync(data);
+    setApiError(null);
+    setSuccessNotice(null);
+    try {
+      if (!hasApplication) {
+        await createMutation.mutateAsync(data);
+        setSuccessNotice('Storefront application draft saved.');
+      } else {
+        await updateMutation.mutateAsync(data);
+        setSuccessNotice('Storefront application updated.');
+      }
+      await refetch();
+      setIsEditing(false);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to save application.';
+      setApiError(msg);
+      throw err;
     }
   };
 
   const handleSubmitApplication = async (data: CreateSellerApplicationDTO) => {
-    if (!hasApplication) {
-      await createMutation.mutateAsync(data);
-    } else {
-      await updateMutation.mutateAsync(data);
+    setApiError(null);
+    setSuccessNotice(null);
+    try {
+      if (!hasApplication) {
+        await createMutation.mutateAsync(data);
+      } else {
+        await updateMutation.mutateAsync(data);
+      }
+      await submitMutation.mutateAsync();
+      await refetch();
+      setSuccessNotice('Storefront application submitted for review.');
+      setIsEditing(false);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to submit application.';
+      setApiError(msg);
+      throw err;
     }
-    await submitMutation.mutateAsync();
   };
 
   const handlePatchProfile = async (data: PatchSellerProfileDTO) => {
     await patchProfileMutation.mutateAsync(data);
+    await refetch();
   };
 
   const handleUploadLogo = async (file: File) => {
     await uploadLogoMutation.mutateAsync(file);
+    await refetch();
   };
 
   const handleUploadBanner = async (file: File) => {
     await uploadBannerMutation.mutateAsync(file);
+    await refetch();
   };
 
   const handleDeleteLogo = async () => {
     await deleteLogoMutation.mutateAsync();
+    await refetch();
   };
 
   const handleDeleteBanner = async () => {
     await deleteBannerMutation.mutateAsync();
+    await refetch();
   };
 
   if (isLoading) {
@@ -116,8 +150,24 @@ export const SellerProfilePage: React.FC = () => {
   return (
     <AccountWorkspace
       title="Storefront"
-      actions={<ApplicationStatusBadge status={status || 'DRAFT'} size="sm" />}
+      actions={
+        <div className="flex items-center gap-2">
+          {hasApplication && !isEditing && isEditable && !isApproved && (
+            <Button size="sm" variant="secondary" onClick={() => setIsEditing(true)}>
+              <Edit3 className="h-3.5 w-3.5" /> Edit
+            </Button>
+          )}
+          <ApplicationStatusBadge status={status || 'DRAFT'} size="sm" />
+        </div>
+      }
     >
+      {successNotice && (
+        <Alert variant="success" message={successNotice} onClose={() => setSuccessNotice(null)} />
+      )}
+      {apiError && (
+        <Alert variant="error" message={apiError} onClose={() => setApiError(null)} />
+      )}
+
       <ApplicationStepper
         status={status || 'DRAFT'}
         submittedAt={application?.submittedAt}
@@ -142,21 +192,21 @@ export const SellerProfilePage: React.FC = () => {
 
           <div className="border-t border-gray-100 pt-6">
             <h3 className="mb-4 text-sm font-semibold text-gray-900">Registration details</h3>
-            <SellerApplicationForm
-              application={application}
-              onSaveDraft={handleSaveDraft}
-              onSubmitApplication={handleSubmitApplication}
-              isEditable={false}
-              isSaving={false}
-              isSubmitting={false}
-            />
+            <StorefrontDetailsCard application={application} isEditable={false} />
           </div>
         </div>
+      ) : hasApplication && !isEditing ? (
+        <StorefrontDetailsCard
+          application={application!}
+          onEdit={() => setIsEditing(true)}
+          isEditable={isEditable}
+        />
       ) : (
         <SellerApplicationForm
           application={application || null}
           onSaveDraft={handleSaveDraft}
           onSubmitApplication={handleSubmitApplication}
+          onCancel={hasApplication ? () => setIsEditing(false) : undefined}
           isEditable={isEditable}
           isSaving={createMutation.isPending || updateMutation.isPending}
           isSubmitting={submitMutation.isPending}

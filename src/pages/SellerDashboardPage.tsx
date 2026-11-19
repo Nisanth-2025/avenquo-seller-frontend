@@ -76,140 +76,155 @@ export const SellerDashboardPage: React.FC = () => {
 
   if (!hasSellerRole) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="flex min-h-screen flex-col bg-[#f3f4f8]">
         <SellerHeader activeTab="dashboard" />
-        <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-          <section className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-            <h1 className="text-xl font-bold text-gray-900">Seller access is not active</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Product management and marketplace categories become available when your account JWT includes the SELLER role.
+        <main className="flex flex-1 items-center justify-center p-6">
+          <div className="w-full max-w-md space-y-4 rounded-3xl bg-white p-8 text-center shadow-[0_16px_50px_rgba(15,23,42,0.06)]">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+              <ShieldAlert className="h-6 w-6" />
+            </div>
+            <h1 className="text-lg font-semibold text-gray-900">Seller access is not active</h1>
+            <p className="text-sm text-gray-500">
+              Product catalog operations and categories become available once your seller onboarding is verified.
             </p>
-            <Link
-              to="/dashboard/profile"
-              className="mt-5 inline-flex rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
-            >
-              View seller application
-            </Link>
-          </section>
+            <div className="pt-2">
+              <Link to="/dashboard/profile">
+                <Button size="sm" variant="primary">
+                  View seller application
+                </Button>
+              </Link>
+            </div>
+          </div>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="flex min-h-screen flex-col bg-[#f3f4f8]">
       {/* Top Header with brand and Seller Account Profile Menu */}
       <SellerHeader activeTab="dashboard" />
 
       {/* Main Dashboard Container */}
-      <main className="flex-1 mx-auto max-w-7xl w-full px-4 py-8 sm:px-6 space-y-8">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8 space-y-6">
         {/* Welcome & Quick Operational Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-              Merchant Operations Dashboard 👋
+            <h1 className="text-[22px] font-semibold tracking-tight text-gray-900">
+              Merchant Operations
             </h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-0.5 text-xs text-gray-500">
               Welcome back{user?.email ? `, ${user.email.split('@')[0]}` : ''}. Manage your catalog,
               monitor inventory, and explore product categories.
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             <Link to="/dashboard/categories">
               <Button size="sm" variant="secondary">
-                <Layers className="h-4 w-4" /> Browse Categories
+                <Layers className="h-3.5 w-3.5" /> Categories
               </Button>
             </Link>
             <Button size="sm" onClick={() => setIsCreateOpen(true)}>
-              <PlusCircle className="h-4 w-4" /> Add Product
+              <PlusCircle className="h-3.5 w-3.5" /> Add Product
             </Button>
           </div>
         </div>
 
-        {/* ── Merchant Verification Status Alerts (Non-intrusive) ── */}
+        {/* ── Merchant Verification Status Alerts ── */}
         {!hasApplication && (
-          <div className="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 via-indigo-50/40 to-white p-6 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="rounded-2xl bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+                <Sparkles className="h-4 w-4" />
+              </div>
               <div className="space-y-1">
-                <span className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-brand-700 bg-brand-100/70 px-2.5 py-0.5 rounded-full">
-                  <Sparkles className="h-3 w-3" /> Merchant Setup Needed
-                </span>
-                <h3 className="text-base font-bold text-gray-900">
-                  Complete Storefront & Compliance Onboarding
-                </h3>
-                <p className="text-xs text-gray-600 max-w-xl">
-                  Set up your brand profile, tax records, bank details, documents, and business address via the Seller Account menu in the top-right corner.
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    Complete Storefront & Compliance Onboarding
+                  </h3>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-200">
+                    Action required
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 max-w-xl">
+                  Set up your brand storefront, tax records, bank account, documents, and business address via the Account menu.
                 </p>
               </div>
-              <Link to="/dashboard/profile">
-                <Button size="sm">
-                  Complete Profile <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
             </div>
+            <Link to="/dashboard/profile">
+              <Button size="sm" variant="primary">
+                Complete Profile <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
           </div>
         )}
 
         {isDraft && (
-          <div className="rounded-2xl border border-gray-300 bg-white p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full">
-                  Application Draft
-                </span>
-                <span className="text-xs text-gray-500 font-mono">
-                  {application?.storeName} ({application?.storeSlug})
-                </span>
+          <div className="rounded-2xl bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f6f7f9] text-gray-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+                <Clock className="h-4 w-4" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900">
-                Finish & Submit Your Merchant Application
-              </h3>
-              <p className="text-xs text-gray-500">
-                Your profile draft is saved. Review details and submit for verification.
-              </p>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    Finish & Submit Your Merchant Application
+                  </h3>
+                  <span className="text-[11px] font-mono text-gray-400">
+                    {application?.storeName}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Your storefront draft is saved. Review details and submit for verification.
+                </p>
+              </div>
             </div>
             <Link to="/dashboard/profile">
               <Button size="sm" variant="secondary">
-                Resume Setup <ArrowRight className="h-4 w-4" />
+                Resume Setup <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </Link>
           </div>
         )}
 
         {isChangesRequired && (
-          <div className="rounded-2xl border border-amber-300 bg-amber-50/90 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
-                <ShieldAlert className="h-3.5 w-3.5" /> Action Required on Profile
-              </span>
-              <h3 className="text-sm font-bold text-amber-950">
-                Reviewer Requested Application Updates
-              </h3>
-              <p className="text-xs text-amber-800">
-                {application?.rejectionReason || 'Please review your application fields and update per reviewer guidelines.'}
-              </p>
+          <div className="rounded-2xl bg-amber-50/80 p-5 border border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-amber-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+                <ShieldAlert className="h-4 w-4" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm font-semibold text-amber-950">
+                  Reviewer Requested Application Updates
+                </h3>
+                <p className="text-xs text-amber-800">
+                  {application?.rejectionReason || 'Please review your application fields and update per reviewer guidelines.'}
+                </p>
+              </div>
             </div>
             <Link to="/dashboard/profile">
-              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
-                Edit & Resubmit <ArrowRight className="h-4 w-4" />
+              <Button size="sm" variant="primary">
+                Edit & Resubmit <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </Link>
           </div>
         )}
 
         {isSubmittedOrReview && (
-          <div className="rounded-2xl border border-blue-200 bg-blue-50/60 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" /> Application Under Review
-              </span>
-              <h3 className="text-sm font-bold text-gray-900">
-                Storefront Submitted for Compliance Verification
-              </h3>
-              <p className="text-xs text-gray-500">
-                Our verification team is reviewing your entity records.
-              </p>
+          <div className="rounded-2xl bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-brand-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+                <Clock className="h-4 w-4 animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Storefront Submitted for Compliance Verification
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Our verification team is reviewing your entity records.
+                </p>
+              </div>
             </div>
             <Link to="/dashboard/profile">
               <Button size="sm" variant="secondary">
@@ -220,87 +235,87 @@ export const SellerDashboardPage: React.FC = () => {
         )}
 
         {/* ── Key Business Metrics Bar ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Link
             to="/dashboard/products"
-            className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
+            className="group rounded-2xl bg-white p-4 sm:p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all"
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600 group-hover:bg-brand-600 group-hover:text-white transition-colors">
-                <Package className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f6f7f9] text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.04)] group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                <Package className="h-4 w-4" />
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" />
             </div>
-            <span className="text-xs font-medium text-gray-400 block">Total Catalog Products</span>
-            <span className="text-2xl font-bold text-gray-900 font-mono mt-1 block">
+            <span className="text-xs font-medium text-gray-500 block">Total Catalog Products</span>
+            <span className="text-2xl font-semibold tracking-tight text-gray-900 font-mono mt-1 block">
               {totalProducts}
             </span>
           </Link>
 
           <Link
             to="/dashboard/products"
-            className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:border-emerald-300 hover:shadow-md transition-all"
+            className="group rounded-2xl bg-white p-4 sm:p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all"
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                <TrendingUp className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f6f7f9] text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.04)] group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                <TrendingUp className="h-4 w-4" />
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
             </div>
-            <span className="text-xs font-medium text-gray-400 block">Active Online</span>
-            <span className="text-2xl font-bold text-emerald-600 font-mono mt-1 block">
+            <span className="text-xs font-medium text-gray-500 block">Active Online</span>
+            <span className="text-2xl font-semibold tracking-tight text-emerald-600 font-mono mt-1 block">
               {activeProducts}
             </span>
           </Link>
 
           <Link
             to="/dashboard/products"
-            className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:border-blue-300 hover:shadow-md transition-all"
+            className="group rounded-2xl bg-white p-4 sm:p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all"
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <Boxes className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f6f7f9] text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.04)] group-hover:bg-blue-50 group-hover:text-brand-600 transition-colors">
+                <Boxes className="h-4 w-4" />
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" />
             </div>
-            <span className="text-xs font-medium text-gray-400 block">Total Units in Stock</span>
-            <span className="text-2xl font-bold text-gray-900 font-mono mt-1 block">
+            <span className="text-xs font-medium text-gray-500 block">Total Units in Stock</span>
+            <span className="text-2xl font-semibold tracking-tight text-gray-900 font-mono mt-1 block">
               {totalUnits}
             </span>
           </Link>
 
           <Link
             to="/dashboard/categories"
-            className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:border-purple-300 hover:shadow-md transition-all"
+            className="group rounded-2xl bg-white p-4 sm:p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all"
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                <Layers className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f6f7f9] text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.04)] group-hover:bg-purple-50 group-hover:text-purple-600 transition-colors">
+                <Layers className="h-4 w-4" />
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all" />
             </div>
-            <span className="text-xs font-medium text-gray-400 block">Marketplace Categories</span>
-            <span className="text-2xl font-bold text-purple-700 font-mono mt-1 block">
+            <span className="text-xs font-medium text-gray-500 block">Marketplace Categories</span>
+            <span className="text-2xl font-semibold tracking-tight text-purple-700 font-mono mt-1 block">
               {totalCategories}
             </span>
           </Link>
         </div>
 
         {/* ── SECTION 1: Product Management Quick View ── */}
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-gray-700 shadow-xs border border-gray-100">
                 <Package className="h-4 w-4" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900">Recent Products & Inventory</h2>
+              <h2 className="text-sm font-semibold text-gray-900">Recent Products & Inventory</h2>
             </div>
             <Link
               to="/dashboard/products"
-              className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1"
+              className="text-xs font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1"
             >
-              <span>View All Products ({totalProducts})</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <span>View all ({totalProducts})</span>
+              <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
 
@@ -309,23 +324,23 @@ export const SellerDashboardPage: React.FC = () => {
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-64 rounded-2xl border border-gray-200 bg-white p-4 animate-pulse space-y-3"
+                  className="h-64 rounded-2xl bg-white border border-gray-100 p-4 animate-pulse space-y-3"
                 >
-                  <div className="h-32 rounded-xl bg-gray-200" />
-                  <div className="h-4 w-3/4 rounded bg-gray-200" />
-                  <div className="h-3 w-1/2 rounded bg-gray-100" />
+                  <div className="h-32 rounded-xl bg-gray-100" />
+                  <div className="h-4 w-3/4 rounded bg-gray-100" />
+                  <div className="h-3 w-1/2 rounded bg-gray-50" />
                 </div>
               ))}
             </div>
           ) : products.length === 0 ? (
-            <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center space-y-3 shadow-sm">
+            <div className="rounded-2xl bg-white p-8 text-center space-y-3 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100">
               <Package className="h-8 w-8 text-gray-300 mx-auto" />
-              <h3 className="text-sm font-bold text-gray-900">No products added yet</h3>
+              <h3 className="text-sm font-semibold text-gray-900">No products added yet</h3>
               <p className="text-xs text-gray-500 max-w-sm mx-auto">
                 Start listing your inventory to reach buyers on the Avenquo marketplace.
               </p>
               <Button size="sm" onClick={() => setIsCreateOpen(true)}>
-                <PlusCircle className="h-4 w-4" /> Add Your First Product
+                <PlusCircle className="h-3.5 w-3.5" /> Add Your First Product
               </Button>
             </div>
           ) : (
@@ -337,10 +352,10 @@ export const SellerDashboardPage: React.FC = () => {
                 return (
                   <div
                     key={product.productId}
-                    className="group flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-3.5 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
+                    className="group flex flex-col justify-between rounded-2xl bg-white p-3.5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all"
                   >
                     <div className="space-y-2.5">
-                      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-100 border border-gray-100 flex items-center justify-center">
+                      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#f6f7f9] border border-gray-100 flex items-center justify-center">
                         {primaryImage ? (
                           <img
                             src={primaryImage.imageUrl}
@@ -358,7 +373,7 @@ export const SellerDashboardPage: React.FC = () => {
                       <div>
                         <h4
                           onClick={() => setProductForDetail(product)}
-                          className="text-xs font-bold text-gray-900 truncate hover:text-brand-600 cursor-pointer"
+                          className="text-xs font-semibold text-gray-900 truncate hover:text-brand-600 cursor-pointer"
                           title={product.productName}
                         >
                           {product.productName}
@@ -378,7 +393,7 @@ export const SellerDashboardPage: React.FC = () => {
                       </div>
 
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-sm font-bold text-brand-700 font-mono">
+                        <span className="text-sm font-semibold text-brand-700 font-mono">
                           ₹{Number(product.specialPrice).toFixed(2)}
                         </span>
                         {product.discount > 0 && (
@@ -393,7 +408,7 @@ export const SellerDashboardPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setProductForDetail(product)}
-                        className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100"
+                        className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                         title="View details"
                       >
                         <Eye className="h-3.5 w-3.5" />
@@ -401,7 +416,7 @@ export const SellerDashboardPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setProductToEdit(product)}
-                        className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100"
+                        className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                         title="Edit product"
                       >
                         <Edit className="h-3.5 w-3.5" />
@@ -409,7 +424,7 @@ export const SellerDashboardPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setProductForImages(product)}
-                        className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100"
+                        className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                         title="Manage images"
                       >
                         <ImageIcon className="h-3.5 w-3.5" />
@@ -435,20 +450,20 @@ export const SellerDashboardPage: React.FC = () => {
         </div>
 
         {/* ── SECTION 2: Category Management & Explorer ── */}
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-gray-700 shadow-xs border border-gray-100">
                 <Layers className="h-4 w-4" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900">Explore Marketplace Categories</h2>
+              <h2 className="text-sm font-semibold text-gray-900">Explore Marketplace Categories</h2>
             </div>
             <Link
               to="/dashboard/categories"
-              className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1"
+              className="text-xs font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1"
             >
-              <span>Explore All Categories</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <span>Explore all</span>
+              <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
 
@@ -457,10 +472,10 @@ export const SellerDashboardPage: React.FC = () => {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-32 rounded-xl border border-gray-200 bg-white p-3 animate-pulse space-y-2"
+                  className="h-32 rounded-2xl bg-white border border-gray-100 p-3 animate-pulse space-y-2"
                 >
-                  <div className="h-16 rounded-lg bg-gray-200" />
-                  <div className="h-3 w-3/4 rounded bg-gray-200" />
+                  <div className="h-16 rounded-xl bg-gray-100" />
+                  <div className="h-3 w-3/4 rounded bg-gray-100" />
                 </div>
               ))}
             </div>
@@ -470,9 +485,9 @@ export const SellerDashboardPage: React.FC = () => {
                 <Link
                   key={cat.categoryId}
                   to={`/dashboard/products?new=1&categoryId=${cat.categoryId}`}
-                  className="group flex flex-col items-center text-center rounded-xl border border-gray-200 bg-white p-3 shadow-xs hover:border-brand-300 hover:shadow-sm transition-all"
+                  className="group flex flex-col items-center text-center rounded-2xl bg-white p-3 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all"
                 >
-                  <div className="h-16 w-full rounded-lg overflow-hidden bg-gray-100 border border-gray-100 mb-2 flex items-center justify-center">
+                  <div className="h-16 w-full rounded-xl overflow-hidden bg-[#f6f7f9] border border-gray-100 mb-2 flex items-center justify-center">
                     {cat.categoryImageUrl ? (
                       <img
                         src={cat.categoryImageUrl}
@@ -496,13 +511,13 @@ export const SellerDashboardPage: React.FC = () => {
         </div>
 
         {/* ── SECTION 3: Orders & Fulfillment Preview Card ── */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600">
-              <ShoppingBag className="h-6 w-6" />
+        <div className="rounded-2xl bg-white p-5 sm:p-6 shadow-[0_4px_20px_rgba(15,23,42,0.04)] border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#f6f7f9] text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+              <ShoppingBag className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900">Orders & Fulfillment Manifests</h3>
+              <h3 className="text-sm font-semibold text-gray-900">Orders & Fulfillment Manifests</h3>
               <p className="text-xs text-gray-500 mt-0.5">
                 Orders dispatch when buyers complete checkout for active listings. Ensure return windows and quantities are kept up to date.
               </p>

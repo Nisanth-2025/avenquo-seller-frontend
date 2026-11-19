@@ -103,7 +103,7 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
   ];
 
   return (
-    <header className="border-b border-gray-200 bg-white sticky top-0 z-30 shadow-sm">
+    <header className="border-b border-gray-100 bg-white/95 backdrop-blur-md sticky top-0 z-30">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         {/* Left: Brand + Desktop Nav */}
         <div className="flex items-center gap-8">
@@ -137,10 +137,10 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
           <nav className="hidden md:flex items-center gap-1">
             <Link
               to="/dashboard"
-              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+              className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
                 currentTab === 'dashboard'
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'bg-gray-100 text-gray-900 font-semibold'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
               <LayoutDashboard className="h-4 w-4" />
@@ -151,10 +151,10 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
               <>
                 <Link
                   to="/dashboard/products"
-                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
                     currentTab === 'products'
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'bg-gray-100 text-gray-900 font-semibold'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
                   <Package className="h-4 w-4" />
@@ -163,10 +163,10 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
 
                 <Link
                   to="/dashboard/categories"
-                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
                     currentTab === 'categories'
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'bg-gray-100 text-gray-900 font-semibold'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
                   <Layers className="h-4 w-4" />
@@ -188,7 +188,7 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
               className={`flex items-center gap-2.5 rounded-xl border p-1.5 pr-2.5 text-left transition-all ${
                 isDropdownOpen
                   ? 'border-brand-500 ring-2 ring-brand-100 bg-brand-50/50'
-                  : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 shadow-sm'
+                  : 'border-gray-200/80 hover:border-gray-300 bg-white hover:bg-gray-50/80 shadow-xs'
               }`}
             >
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white font-bold text-xs shadow-xs">
@@ -220,9 +220,9 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-88 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl ring-1 ring-black/5 animate-slide-up z-50">
+              <div className="absolute right-0 mt-2 w-80 sm:w-88 rounded-2xl border border-gray-100 bg-white p-2 shadow-[0_16px_50px_rgba(15,23,42,0.12)] ring-1 ring-black/5 animate-slide-up z-50">
                 {/* User / Merchant Summary */}
-                <div className="rounded-xl bg-gradient-to-br from-gray-50 to-brand-50/30 p-3 mb-2 border border-gray-100">
+                <div className="rounded-xl bg-[#f6f7f9] p-3 mb-2 border border-gray-100/80">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-gray-900 truncate">
@@ -251,7 +251,7 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
                 </div>
 
                 {/* Seller Account Section Header */}
-                <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 flex items-center justify-between">
+                <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 flex items-center justify-between">
                   <span>Seller Account Modules</span>
                 </div>
 
@@ -267,31 +267,31 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
                         onClick={() => setIsDropdownOpen(false)}
                         className={`flex items-start gap-3 rounded-xl p-2.5 transition-colors ${
                           isActive
-                            ? 'bg-brand-50 text-brand-900'
-                            : 'hover:bg-gray-50 text-gray-700'
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'hover:bg-gray-50 text-gray-600 hover:text-gray-900'
                         }`}
                       >
                         <div
-                          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg mt-0.5 ${
+                          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl mt-0.5 ${
                             isActive
                               ? 'bg-brand-600 text-white'
-                              : 'bg-gray-100 text-gray-600'
+                              : 'bg-white border border-gray-100 text-gray-600 shadow-xs'
                           }`}
                         >
-                          <Icon className="h-4 w-4" />
+                          <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-1">
                             <span
                               className={`text-xs font-semibold ${
-                                isActive ? 'text-brand-900' : 'text-gray-900'
+                                isActive ? 'text-gray-900' : 'text-gray-800'
                               }`}
                             >
                               {item.label}
                             </span>
                             {item.badge}
                           </div>
-                          <p className="text-[11px] text-gray-500 truncate leading-snug">
+                          <p className="text-[11px] text-gray-400 truncate leading-snug">
                             {item.desc}
                           </p>
                         </div>
@@ -331,17 +331,17 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
 
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white px-4 py-4 space-y-4 shadow-lg animate-slide-up">
+        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-4 shadow-lg animate-slide-up">
           {/* Quick Nav */}
           <div className="space-y-1">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-2 py-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 px-3 py-1">
               Operations
             </div>
             <Link
               to="/dashboard"
-              className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold ${
+              className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium ${
                 currentTab === 'dashboard'
-                  ? 'bg-brand-50 text-brand-700'
+                  ? 'bg-gray-100 text-gray-900 font-semibold'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -352,9 +352,9 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
               <>
                 <Link
                   to="/dashboard/products"
-                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold ${
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium ${
                     currentTab === 'products'
-                      ? 'bg-brand-50 text-brand-700'
+                      ? 'bg-gray-100 text-gray-900 font-semibold'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -363,9 +363,9 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
                 </Link>
                 <Link
                   to="/dashboard/categories"
-                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold ${
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium ${
                     currentTab === 'categories'
-                      ? 'bg-brand-50 text-brand-700'
+                      ? 'bg-gray-100 text-gray-900 font-semibold'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -377,16 +377,19 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
           </div>
 
           <div className="border-t border-gray-100 pt-3 space-y-1">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-2 py-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 px-3 py-1">
               Seller Account
             </div>
             {sellerAccountModules.map((item) => {
               const Icon = item.icon;
+              const isActive = location.pathname === item.to;
               return (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className="flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  className={`flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium ${
+                    isActive ? 'bg-gray-100 text-gray-900 font-semibold' : 'text-gray-700 hover:bg-gray-50'
+                  }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <Icon className="h-4 w-4 text-gray-500" />
@@ -401,8 +404,8 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
           <div className="border-t border-gray-100 pt-2">
             <button
               type="button"
-                onClick={() => logout()}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50"
+              onClick={() => logout()}
+              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50"
             >
               <LogOut className="h-4 w-4" />
               <span>Sign out ({user?.email})</span>

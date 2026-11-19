@@ -287,16 +287,16 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-xs animate-fade-in">
       <div
-        className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden animate-slide-up flex flex-col max-h-[92vh]"
+        className="w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_rgba(15,23,42,0.16)] flex flex-col max-h-[92vh] animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-gray-50/60">
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-white">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-              <Package className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.06)] border border-gray-100">
+              <Package className="h-5 w-5 text-gray-700" />
             </div>
             <div>
               <h2 className="text-base font-bold text-gray-900">
@@ -311,7 +311,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -327,11 +327,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             <Alert variant="error" message={apiError} onClose={() => setApiError(null)} />
           )}
 
-          {/* Category & Basic Info */}
-          <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <Layers className="h-4 w-4" /> Classification & Identity
-            </h3>
+          {/* Category & Basic Info Card */}
+          <div className="rounded-2xl bg-[#f6f7f9] p-4 sm:p-5 space-y-4">
+            <div className="flex items-center gap-2">
+              <Layers className="h-4 w-4 text-brand-600" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-700">
+                Classification & Identity
+              </h3>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Category */}
@@ -393,11 +396,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
           </div>
 
-          {/* Pricing & Stock */}
-          <div className="space-y-4 pt-4 border-t border-gray-100">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <DollarSign className="h-4 w-4" /> Pricing & Inventory
-            </h3>
+          {/* Pricing & Stock Card */}
+          <div className="rounded-2xl bg-[#f6f7f9] p-4 sm:p-5 space-y-4">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-brand-600" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-700">
+                Pricing & Inventory
+              </h3>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Price */}
@@ -443,7 +449,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
 
             {/* Price Preview Card */}
-            <div className="rounded-xl border border-brand-100 bg-brand-50/40 p-3 flex items-center justify-between text-xs">
+            <div className="rounded-xl border border-brand-100 bg-white p-3 flex items-center justify-between text-xs shadow-xs">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-brand-600" />
                 <span className="text-gray-600 font-medium">Computed Special Price:</span>
@@ -461,13 +467,16 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
           </div>
 
-          {/* Return Policy */}
-          <div className="space-y-4 pt-4 border-t border-gray-100">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <RotateCcw className="h-4 w-4" /> Return & Refund Policy
-            </h3>
+          {/* Return Policy Card */}
+          <div className="rounded-2xl bg-[#f6f7f9] p-4 sm:p-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <RotateCcw className="h-4 w-4 text-brand-600" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-700">
+                Return & Refund Policy
+              </h3>
+            </div>
 
-            <div className="rounded-xl border border-gray-200 p-4 space-y-3 bg-gray-50/50">
+            <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3 shadow-xs">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -485,7 +494,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               </label>
 
               {watchedIsReturnable && (
-                <div className="pt-3 border-t border-gray-200 max-w-xs">
+                <div className="pt-3 border-t border-gray-100 max-w-xs">
                   <Input
                     type="number"
                     step="1"
@@ -503,11 +512,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
           {/* Product Images (Create Mode Only) */}
           {!isEditMode && (
-            <div className="space-y-4 pt-4 border-t border-gray-100">
+            <div className="rounded-2xl bg-[#f6f7f9] p-4 sm:p-5 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-                  <Upload className="h-4 w-4" /> Product Images (1 to 5 Required) *
-                </h3>
+                <div className="flex items-center gap-2">
+                  <Upload className="h-4 w-4 text-brand-600" />
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-700">
+                    Product Images (1 to 5 Required) *
+                  </h3>
+                </div>
                 <span className="text-xs font-semibold text-brand-600">
                   {selectedFiles.length} of 5 selected
                 </span>
@@ -515,9 +527,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
               {/* Upload Dropzone */}
               {selectedFiles.length < 5 && (
-                <label className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 hover:border-brand-400 p-6 bg-gray-50/50 hover:bg-brand-50/20 cursor-pointer transition-colors">
+                <label className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 hover:border-brand-400 p-6 bg-white hover:bg-brand-50/20 cursor-pointer transition-colors shadow-xs">
                   <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <span className="text-xs font-semibold text-gray-700">
+                  <span className="text-xs font-semibold text-gray-800">
                     Click to select product photos
                   </span>
                   <span className="text-[11px] text-gray-400 mt-0.5">
@@ -535,11 +547,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
               {/* Selected Previews */}
               {filePreviews.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-1">
                   {filePreviews.map((src, idx) => (
                     <div
                       key={idx}
-                      className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-100 group shadow-xs"
+                      className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 bg-white group shadow-xs"
                     >
                       <img
                         src={src}
@@ -567,8 +579,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           )}
 
           {isEditMode && (
-            <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-3.5 text-xs text-blue-800 flex items-start gap-2.5">
-              <Info className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-xs text-blue-800 flex items-start gap-2.5">
+              <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
               <div>
                 <span className="font-semibold">Need to manage product imagery?</span> You can add,
                 replace, delete, reorder, and set primary images from the "Manage Images" button on
@@ -579,7 +591,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         </form>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-gray-100 px-6 py-4 bg-gray-50/60">
+        <div className="flex items-center justify-end gap-3 border-t border-gray-100 px-6 py-4 bg-white">
           <Button variant="secondary" size="sm" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>

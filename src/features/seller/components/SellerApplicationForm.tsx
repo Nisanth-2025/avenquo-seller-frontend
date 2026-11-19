@@ -13,7 +13,7 @@ import {
   SellerProfileResponseDTO,
 } from '../../../types/seller.types';
 import { ApiClientError } from '../../../api/client';
-import { Store, Building2, PhoneCall, Save, Send, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Store, Building2, PhoneCall, Save, Send, CheckCircle2 } from 'lucide-react';
 
 const phoneRegex = /^\+91[6-9]\d{9}$/;
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -77,6 +77,7 @@ interface SellerApplicationFormProps {
   application: SellerProfileResponseDTO | null;
   onSaveDraft: (data: CreateSellerApplicationDTO) => Promise<void>;
   onSubmitApplication: (data: CreateSellerApplicationDTO) => Promise<void>;
+  onCancel?: () => void;
   isEditable: boolean;
   isSaving: boolean;
   isSubmitting: boolean;
@@ -86,6 +87,7 @@ export const SellerApplicationForm: React.FC<SellerApplicationFormProps> = ({
   application,
   onSaveDraft,
   onSubmitApplication,
+  onCancel,
   isEditable,
   isSaving,
   isSubmitting,
@@ -210,12 +212,12 @@ export const SellerApplicationForm: React.FC<SellerApplicationFormProps> = ({
 
       {/* ── Section 1: Store & Entity Identity ── */}
       <div className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6">
-        <div className="flex items-center gap-2.5 pb-4 border-b border-gray-100">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-            <Store className="h-5 w-5" />
+        <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+            <Store className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Storefront</h3>
+            <h3 className="text-sm font-semibold text-gray-900">Storefront identity</h3>
           </div>
         </div>
 
@@ -293,12 +295,12 @@ export const SellerApplicationForm: React.FC<SellerApplicationFormProps> = ({
 
       {/* ── Section 2: Contact & Support Channels ── */}
       <div className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6">
-        <div className="flex items-center gap-2.5 pb-4 border-b border-gray-100">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-            <Building2 className="h-5 w-5" />
+        <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+            <Building2 className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Support</h3>
+            <h3 className="text-sm font-semibold text-gray-900">Support channels</h3>
           </div>
         </div>
 
@@ -357,12 +359,12 @@ export const SellerApplicationForm: React.FC<SellerApplicationFormProps> = ({
 
       {/* ── Section 3: Authorized Representative ── */}
       <div className="space-y-5 rounded-2xl bg-[#f6f7f9] p-5 sm:p-6">
-        <div className="flex items-center gap-2.5 pb-4 border-b border-gray-100">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-            <PhoneCall className="h-5 w-5" />
+        <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-600 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+            <PhoneCall className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Representative</h3>
+            <h3 className="text-sm font-semibold text-gray-900">Authorized representative</h3>
           </div>
         </div>
 
@@ -391,42 +393,48 @@ export const SellerApplicationForm: React.FC<SellerApplicationFormProps> = ({
 
       {/* ── Action Toolbar ── */}
       {isEditable && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-xl bg-gray-50 border border-gray-200">
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <Sparkles className="h-4 w-4 text-brand-600 flex-shrink-0" />
-            <span>
-              You can save your progress as a draft and return anytime before submission.
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-gray-100">
+          {onCancel && (
             <Button
               type="button"
               variant="secondary"
-              loading={isSaving}
-              disabled={isSubmitting}
-              onClick={onDraftClick}
-              className="flex-1 sm:flex-none"
+              size="sm"
+              disabled={isSaving || isSubmitting}
+              onClick={onCancel}
+              className="w-full sm:w-auto"
             >
-              <Save className="h-4 w-4" /> Save Draft
+              Cancel
             </Button>
+          )}
 
-            <Button
-              type="button"
-              variant="primary"
-              loading={isSubmitting}
-              disabled={isSaving}
-              onClick={onSubmitClick}
-              className="flex-1 sm:flex-none"
-            >
-              <Send className="h-4 w-4" /> Submit Application
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            loading={isSaving}
+            disabled={isSubmitting}
+            onClick={onDraftClick}
+            className="w-full sm:w-auto"
+          >
+            <Save className="h-4 w-4" /> Save Draft
+          </Button>
+
+          <Button
+            type="button"
+            variant="primary"
+            size="sm"
+            loading={isSubmitting}
+            disabled={isSaving}
+            onClick={onSubmitClick}
+            className="w-full sm:w-auto"
+          >
+            <Send className="h-4 w-4" /> Submit Application
+          </Button>
         </div>
       )}
 
       {!isEditable && (
-        <div className="flex items-center gap-2.5 p-4 rounded-xl bg-gray-50 border border-gray-200 text-xs text-gray-600">
+        <div className="flex items-center gap-2.5 rounded-2xl bg-[#f6f7f9] p-4 text-xs text-gray-600 border border-gray-100">
           <CheckCircle2 className="h-4 w-4 text-gray-400" />
           <span>
             Application fields are currently locked in read-only mode ({application?.status}). To request changes, contact merchant support.

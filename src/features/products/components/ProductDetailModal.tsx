@@ -36,16 +36,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const activeImg = images[activeImageIndex] || primaryImg;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-xs animate-fade-in">
       <div
-        className="w-full max-w-3xl rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden animate-slide-up flex flex-col max-h-[92vh]"
+        className="w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_rgba(15,23,42,0.16)] flex flex-col max-h-[92vh] animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-gray-50/60">
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-white">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-              <Package className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.06)] border border-gray-100">
+              <Package className="h-5 w-5 text-gray-700" />
             </div>
             <div>
               <h2 className="text-base font-bold text-gray-900">{product.productName}</h2>
@@ -56,11 +56,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <ProductStatusBadge status={product.status} size="sm" />
             <button
               onClick={onClose}
-              className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
@@ -73,7 +73,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Image Gallery */}
             <div className="space-y-3">
-              <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+              <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#f6f7f9] border border-gray-100 flex items-center justify-center shadow-xs">
                 {activeImg ? (
                   <img
                     src={activeImg.imageUrl}
@@ -98,9 +98,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       key={img.productImageId}
                       type="button"
                       onClick={() => setActiveImageIndex(idx)}
-                      className={`relative h-14 w-14 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                      className={`relative h-14 w-14 shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
                         activeImageIndex === idx
-                          ? 'border-brand-600 ring-2 ring-brand-100'
+                          ? 'border-brand-600 ring-2 ring-brand-100 shadow-xs'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -118,7 +118,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             {/* Pricing & Key Attributes */}
             <div className="space-y-4">
               {/* Price Block */}
-              <div className="rounded-2xl border border-brand-100 bg-brand-50/30 p-4 space-y-1">
+              <div className="rounded-2xl border border-brand-100/60 bg-brand-50/40 p-4 space-y-1 shadow-xs">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Pricing
                 </span>
@@ -141,7 +141,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
               {/* Inventory & Status Grid */}
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-3">
+                <div className="rounded-2xl bg-[#f6f7f9] p-3.5 border border-gray-100">
                   <span className="text-gray-400 font-medium block">Available Stock</span>
                   <div className="flex items-center gap-1.5 mt-1">
                     <Boxes className="h-4 w-4 text-gray-500" />
@@ -159,17 +159,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-3">
+                <div className="rounded-2xl bg-[#f6f7f9] p-3.5 border border-gray-100">
                   <span className="text-gray-400 font-medium block">Category</span>
                   <div className="flex items-center gap-1.5 mt-1 truncate">
-                    <Layers className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                    <Layers className="h-4 w-4 text-gray-500 shrink-0" />
                     <span className="font-semibold text-gray-900 truncate">
                       {product.categoryName || `Category #${product.categoryId}`}
                     </span>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-3">
+                <div className="rounded-2xl bg-[#f6f7f9] p-3.5 border border-gray-100">
                   <span className="text-gray-400 font-medium block">Return Policy</span>
                   <div className="flex items-center gap-1.5 mt-1">
                     <RotateCcw className="h-4 w-4 text-gray-500" />
@@ -181,7 +181,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-3">
+                <div className="rounded-2xl bg-[#f6f7f9] p-3.5 border border-gray-100">
                   <span className="text-gray-400 font-medium block">Slug</span>
                   <div className="flex items-center gap-1.5 mt-1 font-mono text-[11px] text-gray-700 truncate">
                     {product.slug}
@@ -221,22 +221,22 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           {/* Descriptions */}
           <div className="space-y-4 pt-4 border-t border-gray-100">
             {product.shortDescription && (
-              <div className="space-y-1">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+              <div className="space-y-1.5">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Short Description
                 </h4>
-                <p className="text-xs text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <p className="text-xs text-gray-700 leading-relaxed bg-[#f6f7f9] p-3.5 rounded-2xl border border-gray-100">
                   {product.shortDescription}
                 </p>
               </div>
             )}
 
             {product.description && (
-              <div className="space-y-1">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+              <div className="space-y-1.5">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Full Product Description
                 </h4>
-                <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-line bg-gray-50 p-3.5 rounded-xl border border-gray-100">
+                <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-line bg-[#f6f7f9] p-4 rounded-2xl border border-gray-100">
                   {product.description}
                 </p>
               </div>
@@ -251,12 +251,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/60">
+        <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-white">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onToggleStatus(product)}
-            className={product.status === 'ACTIVE' ? 'text-amber-600' : 'text-emerald-600'}
+            className={product.status === 'ACTIVE' ? 'text-amber-600 hover:text-amber-700' : 'text-emerald-600 hover:text-emerald-700'}
           >
             {product.status === 'ACTIVE' ? 'Deactivate Product' : 'Activate Product'}
           </Button>

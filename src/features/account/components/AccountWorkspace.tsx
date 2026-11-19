@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FileCheck, Landmark, MapPin, Receipt, Store } from 'lucide-react';
+import { FileCheck, Landmark, MapPin, Receipt, ShieldCheck, Store } from 'lucide-react';
 import { SellerHeader } from '../../../components/navigation/SellerHeader';
 
 const NAV = [
@@ -9,6 +9,7 @@ const NAV = [
   { to: '/dashboard/documents', label: 'Documents', icon: FileCheck },
   { to: '/dashboard/bank', label: 'Payouts', icon: Landmark },
   { to: '/dashboard/address', label: 'Address', icon: MapPin },
+  { to: '/dashboard/security', label: 'Security', icon: ShieldCheck },
 ];
 
 interface AccountWorkspaceProps {

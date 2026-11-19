@@ -203,16 +203,16 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
     reorderImagesMutation.isPending;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-xs animate-fade-in">
       <div
-        className="w-full max-w-3xl rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden animate-slide-up flex flex-col max-h-[90vh]"
+        className="w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_rgba(15,23,42,0.16)] flex flex-col max-h-[90vh] animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-gray-50/60">
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-white">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-              <ImageIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-700 shadow-[0_1px_2px_rgba(15,23,42,0.06)] border border-gray-100">
+              <ImageIcon className="h-5 w-5 text-gray-700" />
             </div>
             <div>
               <h2 className="text-base font-bold text-gray-900">Manage Product Images</h2>
@@ -226,7 +226,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -245,7 +245,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
           {/* Current Images List */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-700">
                 Current Images ({currentCount})
               </h3>
               <span className="text-[11px] text-gray-400">
@@ -254,7 +254,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
             </div>
 
             {currentCount === 0 ? (
-              <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400 text-xs">
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-[#f6f7f9] p-8 text-center text-gray-400 text-xs">
                 No images associated with this product.
               </div>
             ) : (
@@ -262,14 +262,14 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
                 {localImages.map((img, idx) => (
                   <div
                     key={img.productImageId}
-                    className={`relative rounded-xl border p-2.5 transition-all bg-white shadow-xs ${
+                    className={`relative rounded-2xl border p-3 transition-all bg-white shadow-xs ${
                       img.primaryImage
                         ? 'border-brand-500 ring-2 ring-brand-100'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     {/* Thumbnail */}
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-gray-100 border border-gray-100 mb-2.5">
+                    <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#f6f7f9] border border-gray-100 mb-3">
                       <img
                         src={img.imageUrl}
                         alt={img.altText || `Image ${idx + 1}`}
@@ -289,27 +289,27 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
                     </div>
 
                     {/* Image Controls */}
-                    <div className="space-y-1.5 text-xs">
+                    <div className="space-y-2 text-xs">
                       {/* Set Primary Button */}
                       {!img.primaryImage && (
                         <button
                           type="button"
                           disabled={isWorking}
                           onClick={() => handleSetPrimary(img.productImageId)}
-                          className="w-full flex items-center justify-center gap-1 py-1 px-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 font-medium transition-colors"
+                          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl border border-gray-200 text-gray-700 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 text-xs font-medium transition-colors"
                         >
                           <Star className="h-3 w-3" /> Set as Primary
                         </button>
                       )}
 
-                      {/* Row of actions: Replace, Move Left, Move Right, Delete */}
-                      <div className="flex items-center justify-between gap-1 pt-1 border-t border-gray-100">
+                      {/* Row of actions: Move Left, Replace, Move Right, Delete */}
+                      <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-gray-100">
                         {/* Reorder Left */}
                         <button
                           type="button"
                           disabled={idx === 0 || isWorking}
                           onClick={() => handleMove(idx, 'left')}
-                          className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                           title="Move earlier"
                         >
                           <MoveLeft className="h-3.5 w-3.5" />
@@ -320,7 +320,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
                           type="button"
                           disabled={isWorking}
                           onClick={() => handleTriggerReplace(img.productImageId)}
-                          className="flex-1 flex items-center justify-center gap-1 py-1 px-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 text-[11px] font-medium"
+                          className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-medium transition-colors"
                           title="Replace this image"
                         >
                           <RefreshCw className="h-3 w-3" /> Replace
@@ -331,7 +331,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
                           type="button"
                           disabled={idx === localImages.length - 1 || isWorking}
                           onClick={() => handleMove(idx, 'right')}
-                          className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                           title="Move later"
                         >
                           <MoveRight className="h-3.5 w-3.5" />
@@ -342,7 +342,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
                           type="button"
                           disabled={currentCount <= 1 || isWorking}
                           onClick={() => handleDelete(img.productImageId)}
-                          className="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                           title={
                             currentCount <= 1
                               ? 'Product must have at least 1 image'
@@ -361,7 +361,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
 
           {/* Add More Images Section */}
           {currentCount < 5 && (
-            <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-3">
+            <div className="rounded-2xl bg-[#f6f7f9] p-4 sm:p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-xs font-bold text-gray-900">Add More Images</h4>
@@ -400,7 +400,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
                     {newFiles.map((f, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center gap-1 rounded-lg bg-white border border-gray-200 px-2.5 py-1 text-xs text-gray-700"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-gray-200 px-3 py-1.5 text-xs text-gray-700 shadow-xs"
                       >
                         <span className="max-w-[150px] truncate">{f.name}</span>
                         <button
@@ -410,7 +410,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
                           }
                           className="text-gray-400 hover:text-red-500"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-3.5 w-3.5" />
                         </button>
                       </span>
                     ))}
@@ -450,7 +450,7 @@ export const ProductImageManagerModal: React.FC<ProductImageManagerModalProps> =
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/60">
+        <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-white">
           <span className="text-xs text-gray-500">
             Changes to primary image and ordering are synchronized automatically.
           </span>

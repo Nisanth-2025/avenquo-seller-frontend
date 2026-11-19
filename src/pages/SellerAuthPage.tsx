@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, ArrowRight, LockKeyhole } from 'lucide-react';
+import { Mail, ArrowRight, LockKeyhole, Store } from 'lucide-react';
 
 import { AuthLeftPanel } from '../features/auth/components/AuthLeftPanel';
 import { Button } from '../components/ui/Button';
@@ -60,7 +60,7 @@ const SellerAuthPage: React.FC = () => {
     mode: 'onTouched',
   });
 
-  // ── Step 1: request OTP ───────────────────────────────────────────────────
+  // ── Step 1: request OTP or login with password ─────────────────────────────
   const onEmailSubmit = async (data: EmailForm) => {
     setApiError('');
     setPasswordError('');
@@ -88,14 +88,17 @@ const SellerAuthPage: React.FC = () => {
         else if (err.fieldErrors?.password) setPasswordError(err.fieldErrors.password);
         else setApiError(err.message);
       } else {
-        setApiError('Unable to send code. Check your connection.');
+        setApiError('Unable to process request. Check your connection.');
       }
     }
   };
 
   // ── Step 2: verify OTP ────────────────────────────────────────────────────
   const onVerifyOtp = async () => {
-    if (otp.length !== 6) { setOtpError('Enter all 6 digits'); return; }
+    if (otp.length !== 6) {
+      setOtpError('Enter all 6 digits');
+      return;
+    }
     setOtpError('');
     setApiError('');
     setSubmitting(true);
@@ -104,7 +107,7 @@ const SellerAuthPage: React.FC = () => {
       if (mode === 'signup') {
         await authService.verifySignUpOtp({ email, otp });
         // Per spec: account created, NOT signed in — transition to sign-in
-        setSuccessMsg('Account created! Sign in to access your dashboard.');
+        setSuccessMsg('Account created successfully! Sign in to access your seller dashboard.');
         setMode('signin');
         setStep('email');
         setOtp('');
@@ -144,8 +147,15 @@ const SellerAuthPage: React.FC = () => {
   };
 
   const switchMode = (m: AuthMode) => {
-    setMode(m); setStep('email'); setApiError(''); setSuccessMsg(''); setOtp(''); setOtpError('');
-    setPassword(''); setPasswordError(''); clearErrors('email');
+    setMode(m);
+    setStep('email');
+    setApiError('');
+    setSuccessMsg('');
+    setOtp('');
+    setOtpError('');
+    setPassword('');
+    setPasswordError('');
+    clearErrors('email');
     if (m === 'signup') setLoginMethod('otp');
   };
 
@@ -159,7 +169,7 @@ const SellerAuthPage: React.FC = () => {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-white">
       {/* ── Left brand panel (lg+) ── */}
       <div className="w-[48%] xl:w-[45%] flex-shrink-0">
         <AuthLeftPanel />
@@ -167,14 +177,15 @@ const SellerAuthPage: React.FC = () => {
 
       {/* ── Right form panel ── */}
       <div className="flex flex-1 flex-col min-h-screen bg-white">
-        {/* Mobile logo */}
+        {/* Mobile Header Logo */}
         <div className="flex items-center gap-2 px-6 py-5 lg:hidden border-b border-gray-100">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
-            <svg viewBox="0 0 24 24" className="h-4.5 w-4.5 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white shadow-xs">
+            <Store className="h-5 w-5" />
           </div>
-          <span className="text-base font-semibold text-gray-900">Avenquo Seller</span>
+          <div>
+            <span className="text-base font-bold text-gray-900 block leading-tight">Avenquo</span>
+            <span className="text-[11px] font-medium text-gray-500 block">Seller Portal</span>
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-20">
@@ -182,44 +193,79 @@ const SellerAuthPage: React.FC = () => {
 
             {step === 'email' ? (
               <>
-                {/* ── Tabs ── */}
-                <div className="mb-8">
-                  <div className="flex border-b border-gray-200 gap-6">
-                    {(['signin', 'signup'] as AuthMode[]).map(m => (
-                      <button
-                        key={m}
-                        onClick={() => switchMode(m)}
-                        className={[
-                          'relative pb-3 text-sm font-medium transition-colors duration-150',
-                          mode === m
-                            ? 'text-brand-600 tab-active'
-                            : 'text-gray-500 hover:text-gray-700',
-                        ].join(' ')}
-                      >
-                        {m === 'signin' ? 'Sign in' : 'Create account'}
-                      </button>
-                    ))}
-                  </div>
+                {/* ── Main Auth Mode Tabs (Sign In / Create Account) ── */}
+                <div className="mb-6 flex rounded-xl bg-[#f6f7f9] p-1 text-xs font-medium text-gray-600">
+                  <button
+                    type="button"
+                    onClick={() => switchMode('signin')}
+                    className={`flex-1 rounded-lg py-2 text-center text-xs font-semibold transition-all ${
+                      mode === 'signin'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-800'
+                    }`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchMode('signup')}
+                    className={`flex-1 rounded-lg py-2 text-center text-xs font-semibold transition-all ${
+                      mode === 'signup'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-800'
+                    }`}
+                  >
+                    Create Account
+                  </button>
                 </div>
 
+                {/* ── Sign-in Method Switcher (Email Code vs Password) ── */}
                 {mode === 'signin' && (
-                  <div className="mb-6 flex rounded-lg bg-gray-100 p-1" role="group" aria-label="Sign-in method">
-                    <button type="button" onClick={() => switchLoginMethod('otp')} className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${loginMethod === 'otp' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`} aria-pressed={loginMethod === 'otp'}>Email code</button>
-                    <button type="button" onClick={() => switchLoginMethod('password')} className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${loginMethod === 'password' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`} aria-pressed={loginMethod === 'password'}><LockKeyhole className="mr-1 inline h-3.5 w-3.5" />Password</button>
+                  <div
+                    className="mb-6 flex rounded-xl bg-[#f6f7f9] p-1 text-xs font-medium text-gray-600"
+                    role="group"
+                    aria-label="Sign-in method"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => switchLoginMethod('otp')}
+                      className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition-all ${
+                        loginMethod === 'otp'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-800'
+                      }`}
+                      aria-pressed={loginMethod === 'otp'}
+                    >
+                      <Mail className="h-3.5 w-3.5" />
+                      Email Code
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => switchLoginMethod('password')}
+                      className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition-all ${
+                        loginMethod === 'password'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-800'
+                      }`}
+                      aria-pressed={loginMethod === 'password'}
+                    >
+                      <LockKeyhole className="h-3.5 w-3.5" />
+                      Password
+                    </button>
                   </div>
                 )}
 
                 {/* ── Heading ── */}
                 <div className="mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-900">
-                    {mode === 'signin' ? 'Welcome back' : 'Start selling'}
+                  <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                    {mode === 'signin' ? 'Welcome back' : 'Start selling on Avenquo'}
                   </h2>
                   <p className="mt-1.5 text-sm text-gray-500">
                     {mode === 'signin'
                       ? loginMethod === 'password'
-                        ? 'Sign in with the password linked to your account.'
-                        : 'Enter your email and we\'ll send a one-time sign-in code.'
-                      : 'Enter your email to create your seller account.'}
+                        ? 'Sign in using your password linked to your seller account.'
+                        : 'Enter your registered email to receive a one-time sign-in code.'
+                      : 'Enter your business email to register your seller account.'}
                   </p>
                 </div>
 
@@ -234,43 +280,72 @@ const SellerAuthPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* ── Email form ── */}
+                {/* ── Form ── */}
                 <form onSubmit={handleSubmit(onEmailSubmit)} noValidate className="space-y-4">
                   <Input
-                    label="Email address"
+                    label="Business Email Address"
                     type="email"
                     autoComplete="email"
                     autoFocus
-                    placeholder="you@company.com"
+                    placeholder="seller@company.com"
                     error={errors.email?.message}
                     {...register('email')}
                   />
 
                   {mode === 'signin' && loginMethod === 'password' && (
-                    <Input
-                      label="Password"
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(event) => { setPassword(event.target.value); setPasswordError(''); }}
-                      error={passwordError}
-                    />
+                    <div className="space-y-1.5">
+                      <Input
+                        label="Password"
+                        type="password"
+                        autoComplete="current-password"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(event) => {
+                          setPassword(event.target.value);
+                          setPasswordError('');
+                        }}
+                        error={passwordError}
+                      />
+                      <div className="flex justify-end pt-1">
+                        <button
+                          type="button"
+                          onClick={() => switchLoginMethod('otp')}
+                          className="text-xs font-medium text-brand-600 hover:text-brand-700 hover:underline"
+                        >
+                          Forgot password? Sign in with email code
+                        </button>
+                      </div>
+                    </div>
                   )}
 
-                  <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
-                    {isSubmitting ? '' : (
-                      <>{mode === 'signin' ? loginMethod === 'password' ? 'Sign in' : 'Send sign-in code' : 'Send verification code'} <ArrowRight className="h-4 w-4" /></>
-                    )}
-                  </Button>
+                  <div className="pt-2">
+                    <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
+                      {isSubmitting ? (
+                        ''
+                      ) : (
+                        <span className="flex items-center justify-center gap-2">
+                          {mode === 'signin'
+                            ? loginMethod === 'password'
+                              ? 'Sign In to Dashboard'
+                              : 'Send Sign-in Code'
+                            : 'Send Verification Code'}
+                          <ArrowRight className="h-4 w-4" />
+                        </span>
+                      )}
+                    </Button>
+                  </div>
                 </form>
 
                 {mode === 'signup' && (
-                  <p className="mt-5 text-xs text-gray-400 leading-relaxed">
-                    By creating an account you agree to Avenquo's{' '}
-                    <a href="#" className="text-gray-600 underline underline-offset-2">Terms of Service</a>{' '}
+                  <p className="mt-5 text-xs text-gray-400 leading-relaxed text-center">
+                    By registering an account you agree to Avenquo's{' '}
+                    <a href="#" className="text-gray-600 font-medium underline underline-offset-2">
+                      Terms of Service
+                    </a>{' '}
                     and{' '}
-                    <a href="#" className="text-gray-600 underline underline-offset-2">Privacy Policy</a>.
+                    <a href="#" className="text-gray-600 font-medium underline underline-offset-2">
+                      Seller Privacy Policy
+                    </a>.
                   </p>
                 )}
               </>
@@ -278,17 +353,22 @@ const SellerAuthPage: React.FC = () => {
               <>
                 {/* ── OTP Step ── */}
                 <div className="mb-7">
-                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-                    <Mail className="h-5 w-5 text-brand-600" />
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+                    <Mail className="h-6 w-6" />
                   </div>
-                  <h2 className="text-2xl font-semibold text-gray-900">Check your email</h2>
+                  <h2 className="text-2xl font-bold tracking-tight text-gray-900">Check your email</h2>
                   <p className="mt-2 text-sm text-gray-500">
                     We sent a 6-digit code to{' '}
-                    <span className="font-medium text-gray-700">{email}</span>.{' '}
+                    <span className="font-semibold text-gray-800">{email}</span>.{' '}
                     <button
                       type="button"
-                      onClick={() => { setStep('email'); setOtp(''); setOtpError(''); setApiError(''); }}
-                      className="text-brand-600 hover:underline"
+                      onClick={() => {
+                        setStep('email');
+                        setOtp('');
+                        setOtpError('');
+                        setApiError('');
+                      }}
+                      className="font-medium text-brand-600 hover:text-brand-700 hover:underline"
                     >
                       Change email
                     </button>
@@ -314,16 +394,21 @@ const SellerAuthPage: React.FC = () => {
                 <div className="space-y-5">
                   <OtpInput
                     value={otp}
-                    onChange={v => { setOtp(v); if (otpError) setOtpError(''); }}
+                    onChange={(v) => {
+                      setOtp(v);
+                      if (otpError) setOtpError('');
+                    }}
                     error={otpError}
                     disabled={submitting}
                   />
 
-                  {/* Expiry */}
+                  {/* Expiry indicator */}
                   {!countdown.isExpired && (
                     <p className="text-center text-xs text-gray-400">
                       Code expires in{' '}
-                      <span className="font-semibold text-gray-700 tabular-nums">{countdown.expiryLabel}</span>
+                      <span className="font-semibold text-gray-700 tabular-nums">
+                        {countdown.expiryLabel}
+                      </span>
                     </p>
                   )}
 
@@ -334,7 +419,13 @@ const SellerAuthPage: React.FC = () => {
                     loading={submitting}
                     disabled={otp.length !== 6 || countdown.isExpired}
                   >
-                    {submitting ? '' : (mode === 'signup' ? 'Verify & create account' : 'Verify & sign in')}
+                    {submitting ? (
+                      ''
+                    ) : mode === 'signup' ? (
+                      'Verify & Create Account'
+                    ) : (
+                      'Verify & Sign In'
+                    )}
                   </Button>
 
                   {/* Resend */}
@@ -350,7 +441,10 @@ const SellerAuthPage: React.FC = () => {
                       </button>
                     ) : (
                       <span className="text-gray-400">
-                        Resend in <span className="tabular-nums font-medium text-gray-600">{countdown.cooldownSec}s</span>
+                        Resend in{' '}
+                        <span className="tabular-nums font-semibold text-gray-600">
+                          {countdown.cooldownSec}s
+                        </span>
                       </span>
                     )}
                   </p>
@@ -364,7 +458,10 @@ const SellerAuthPage: React.FC = () => {
         <div className="border-t border-gray-100 px-6 py-4">
           <p className="text-center text-xs text-gray-400">
             Need help?{' '}
-            <a href="mailto:support@avenquo.com" className="text-gray-600 hover:underline">
+            <a
+              href="mailto:support@avenquo.com"
+              className="font-medium text-gray-600 hover:text-gray-900 hover:underline transition-colors"
+            >
               Contact Seller Support
             </a>
           </p>
