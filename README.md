@@ -96,12 +96,8 @@ avenquo-seller-frontend/
 npm install
 ```
 
-### 2. Configure Environment
-Copy `.env.example` to `.env`:
-```env
-# Leave blank for local development using the Vite proxy to http://localhost:8080
-VITE_API_BASE_URL=
-```
+### 2. API Proxy Configuration
+No API base URL environment variable is required. The frontend sends relative `/api/...` requests. During local development, Vite proxies these requests to the Railway backend configured in `vite.config.ts`; deployed Vercel requests are proxied by the rewrite in `vercel.json`. The browser may show `http://localhost:3000/api/...` in its Network panel while developing because Vite receives the browser request and forwards it to Railway.
 
 ### 3. Run Development Server
 ```bash

@@ -181,6 +181,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     setApiError(null);
   }, [productToEdit, initialCategoryId, reset, isOpen]);
 
+  useEffect(() => {
+    return () => filePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+  }, [filePreviews]);
+
   if (!isOpen) return null;
 
   // Handle image files selection in create mode
