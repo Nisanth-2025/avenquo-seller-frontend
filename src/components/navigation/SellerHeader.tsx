@@ -193,7 +193,7 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
               aria-expanded={isDropdownOpen}
               aria-haspopup="true"
               aria-controls="seller-account-menu"
-              className={`flex items-center gap-2.5 rounded-xl border p-1.5 pr-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
+              className={`flex items-center gap-2.5 rounded-xl border p-1.5 pr-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 ${
                 isDropdownOpen
                   ? 'border-brand-500 ring-2 ring-brand-100 bg-brand-50/50'
                   : 'border-gray-200/80 hover:border-gray-300 bg-white hover:bg-gray-50/80 shadow-xs'
@@ -228,7 +228,7 @@ export const SellerHeader: React.FC<SellerHeaderProps> = ({ activeTab }) => {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-88 rounded-2xl border border-gray-100 bg-white p-2 shadow-[0_16px_50px_rgba(15,23,42,0.12)] ring-1 ring-black/5 animate-slide-up z-50">
+              <div className="absolute right-0 z-50 mt-2 max-h-[calc(100dvh-5rem)] w-[min(20rem,calc(100vw-2rem))] overflow-y-auto rounded-2xl border border-gray-100 bg-white p-2 shadow-[0_16px_50px_rgba(15,23,42,0.12)] ring-1 ring-black/5 animate-slide-up">
                 {/* User / Merchant Summary */}
                 <div className="rounded-xl bg-[#f6f7f9] p-3 mb-2 border border-gray-100/80">
                   <div className="flex items-center justify-between gap-2">
