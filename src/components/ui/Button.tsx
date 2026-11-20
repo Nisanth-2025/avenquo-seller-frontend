@@ -17,12 +17,12 @@ export const Button: React.FC<ButtonProps> = ({
   children, variant = 'primary', size = 'md', loading = false,
   fullWidth = false, className, disabled, ...rest
 }) => {
-  const base = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]';
+  const base = 'inline-flex items-center justify-center gap-2 font-medium rounded-xl transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]';
 
   const sizes = {
-    sm: 'px-3.5 py-2 text-sm',
-    md: 'px-4 py-2.5 text-sm',
-    lg: 'px-5 py-3 text-sm',
+    sm: 'h-9 px-3.5 text-xs',
+    md: 'h-10 px-4 text-sm',
+    lg: 'h-11 px-5 text-sm',
   };
 
   const variants = {

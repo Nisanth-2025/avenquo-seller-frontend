@@ -169,14 +169,15 @@ const SellerAuthPage: React.FC = () => {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="min-h-screen bg-[#f3f4f8] p-0 lg:p-5">
       {/* ── Left brand panel (lg+) ── */}
-      <div className="w-[48%] xl:w-[45%] flex-shrink-0">
-        <AuthLeftPanel />
-      </div>
+      <div className="mx-auto flex min-h-screen max-w-[1280px] flex-col gap-5 lg:min-h-[calc(100vh-2.5rem)] lg:flex-row">
+        <div className="hidden w-[48%] shrink-0 xl:w-[45%] lg:block">
+          <AuthLeftPanel />
+        </div>
 
-      {/* ── Right form panel ── */}
-      <div className="flex flex-1 flex-col min-h-screen bg-white">
+        {/* ── Right form panel ── */}
+        <div className="flex min-h-screen flex-1 flex-col bg-white shadow-[0_16px_50px_rgba(15,23,42,0.06)] lg:min-h-0 lg:rounded-[28px]">
         {/* Mobile Header Logo */}
         <div className="flex items-center gap-2 px-6 py-5 lg:hidden border-b border-gray-100">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white shadow-xs">
@@ -465,6 +466,7 @@ const SellerAuthPage: React.FC = () => {
               Contact Seller Support
             </a>
           </p>
+        </div>
         </div>
       </div>
     </div>

@@ -23,7 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={!!error}
           aria-describedby={error ? `${uid}-err` : undefined}
           className={clsx(
-            'block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400',
+            'block h-11 w-full rounded-xl border bg-white px-4 text-sm text-gray-900 placeholder-gray-400',
             'shadow-input transition-colors duration-150',
             'focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600',
             error

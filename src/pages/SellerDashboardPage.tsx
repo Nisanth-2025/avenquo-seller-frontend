@@ -106,7 +106,7 @@ export const SellerDashboardPage: React.FC = () => {
       <SellerHeader activeTab="dashboard" />
 
       {/* Main Dashboard Container */}
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8 space-y-6">
+      <main className="mx-auto w-full max-w-[1180px] flex-1 space-y-6 px-3 py-4 sm:px-6 sm:py-6">
         {/* Welcome & Quick Operational Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
