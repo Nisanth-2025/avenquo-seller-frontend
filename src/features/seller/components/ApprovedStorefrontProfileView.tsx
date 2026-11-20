@@ -123,7 +123,7 @@ export const ApprovedStorefrontProfileView: React.FC<ApprovedStorefrontProfileVi
         }
         setApiError(err.message);
       } else {
-        setApiError('Failed to update storefront profile.');
+        setApiError(err instanceof Error ? err.message : 'Failed to update storefront profile.');
       }
     } finally {
       setIsSubmittingPatch(false);

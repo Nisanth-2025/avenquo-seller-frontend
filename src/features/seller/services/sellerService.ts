@@ -71,23 +71,15 @@ export const sellerService = {
   },
 
   /**
-   * Patch approved storefront profile fields (@ModelAttribute form data)
+   * Patch approved storefront profile fields (@ModelAttribute request parameters)
    * PATCH /api/v1/sellers/profile
    */
   async patchProfile(dto: PatchSellerProfileDTO): Promise<SellerProfileResponseDTO> {
     try {
-      const formData = new URLSearchParams();
-      if (dto.description !== undefined) formData.append('description', dto.description);
-      if (dto.supportEmail !== undefined) formData.append('supportEmail', dto.supportEmail);
-      if (dto.supportPhone !== undefined) formData.append('supportPhone', dto.supportPhone);
-      if (dto.website !== undefined) formData.append('website', dto.website);
-
       const { data } = await apiAxios.patch<SellerProfileResponseDTO>(
         API_ENDPOINTS.SELLERS.PROFILE,
-        formData,
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        }
+        undefined,
+        { params: dto }
       );
       return data;
     } catch (err) {

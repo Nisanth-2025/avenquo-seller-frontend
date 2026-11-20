@@ -81,7 +81,16 @@ export const SellerProfilePage: React.FC = () => {
 
   const handlePatchProfile = async (data: PatchSellerProfileDTO) => {
     await patchProfileMutation.mutateAsync(data);
-    await refetch();
+    const { data: refreshedApplication } = await refetch();
+
+    const wasSaved = refreshedApplication &&
+      Object.entries(data).every(([field, value]) =>
+        refreshedApplication[field as keyof typeof refreshedApplication] === value
+      );
+
+    if (!wasSaved) {
+      throw new Error('The server accepted the update, but the saved values could not be confirmed. Please try again.');
+    }
   };
 
   const handleUploadLogo = async (file: File) => {
